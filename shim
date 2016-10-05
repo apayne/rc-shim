@@ -10,25 +10,34 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # includes SVCCTRL, CMDSTART, CMDSTOP
 . ./supervisor-settings
 
+# detect if the settings were not changed.
 [ $SVCCTRL = "fail" ] && echo "Failed to load service control setting." && exit 1
 [ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
 [ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
 
-
-# set this to the name of the supervised directory
-SERVICE=""
-
-
+# set the service to point to its associated definition
+SERVICE=$SVCDIR/$0
 
 case "$1" in
   start)
+    # detect if there is no definition present.  If so,
+    # copy the default definition to the active service directory
+    # because we are explicitly asking it to start.
+    [ -d $SERVICE ] || \
+        cp -Rav $SVCDEF/$0 $SERVICE || \
+        echo "Failed to create service definition." && \
+        exit 1
+    # attempt to start the service
     $SVCCTRL $CMDSTART $SERVICE
+    exit $?
     ;;
   stop)
     $SVCCTRL $CMDSTOP $SERVICE
+    exit $?
     ;;
   restart)
     $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
+    exit $?
     ;;
   *)
     echo "Usage: $0 {start|stop|restart}"
