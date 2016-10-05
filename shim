@@ -10,8 +10,15 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # includes SVCCTRL, CMDSTART, CMDSTOP
 . ./supervisor-settings
 
+[ $SVCCTRL = "fail" ] && echo "Failed to load service control setting." && exit 1
+[ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
+[ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
+
+
 # set this to the name of the supervised directory
 SERVICE=""
+
+
 
 case "$1" in
   start)

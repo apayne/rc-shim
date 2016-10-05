@@ -1,0 +1,27 @@
+# first, comment out the defaults, then
+# uncomment the variables appropriate for your supervisor
+
+# Defaults - comment these out or the script will fail!
+SVCCTRL=fail
+CMDSTOP=fail
+CMDSTART=fail
+
+# daemontools
+#SVCCTRL=svc
+#CMDSTOP=stop
+#CMDSTART=start
+
+# daemontools-encore
+#SVCCTRL=svc
+#CMDSTOP=stop
+#CMDSTART=start
+
+# runit
+#SVCCTRL=sv
+#CMDSTOP=stop
+#CMDSTART=start
+
+# s6
+#SVCCTRL=s6-svc
+#CMDSTOP=stop
+#CMDSTART=start
