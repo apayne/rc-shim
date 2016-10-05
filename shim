@@ -1,0 +1,32 @@
+#! /bin/sh
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+# load settings for distribution
+# includes PATH
+. ./distro-settings
+
+# load settings for the supervision environment
+# includes SVCCTRL, CMDSTART, CMDSTOP
+. ./supervisor-settings
+
+# set this to the name of the supervised directory
+SERVICE=""
+
+case "$1" in
+  start)
+    $SVCCTRL $CMDSTART $SERVICE
+    ;;
+  stop)
+    $SVCCTRL $CMDSTOP $SERVICE
+    ;;
+  restart)
+    $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0
