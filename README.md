@@ -6,14 +6,14 @@ The rc-shim script is meant to be used as a shim between an
 existing SysV-styled rc script system, and a daemontools-alike 
 supervision system.
 
-The script necessarily takes the place of the original /etc/init.d 
-script and essentially performs a translation of the start/stop/restart 
-commands into something the supervisor can use.
+The script necessarily takes the place of the original script, typically 
+found in /etc/init.d, and essentially performs a translation of the 
+start/stop/restart commands into something the supervisor can use.
 
 By utilizing an existing supervisor, and not leaving the daemon startup 
 to chance (or worse, not having a monitor that detects when it crashes 
-and the init.d system still thinks it's up), two of the weaknesses of 
-the rc.d system can be avoided.
+and the system still thinks it's up), two of the weaknesses of the rc 
+system can be avoided.
 
 
 # Installation #
