@@ -4,8 +4,11 @@
 # along with the location of the active supervision
 # directory with running service definitions.
 
+PATH=fail
+SVCDIR=fail
+
 # A sample configuration is provided.
 
 # Debian 7
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-SVCDIR=/etc/service
+#PATH=/sbin:/bin:/usr/sbin:/usr/bin
+#SVCDIR=/etc/service

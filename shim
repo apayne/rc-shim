@@ -6,6 +6,14 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # includes PATH
 . ./distro-settings
 
+# detect if the settings were not changed.
+[ $PATH = "fail" ] && echo "Failed to PATH setting." && exit 1
+[ $SVCDIR = "fail" ] && echo "Failed to load service directory location setting." && exit 1
+
+# set the service to point to its associated definition
+SERVICE=$SVCDIR/$0
+
+
 # load settings for the supervision environment
 # includes SVCCTRL, CMDSTART, CMDSTOP
 . ./supervisor-settings
@@ -15,8 +23,6 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 [ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
 [ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
 
-# set the service to point to its associated definition
-SERVICE=$SVCDIR/$0
 
 case "$1" in
   start)
@@ -38,6 +44,9 @@ case "$1" in
   restart)
     $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
     exit $?
+    ;;
+  reload)
+    # find the true PID of the daemon and send a SIGHUP
     ;;
   *)
     echo "Usage: $0 {start|stop|restart}"
