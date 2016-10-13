@@ -66,6 +66,6 @@ common operation is to request a reload of settings.  This is not
 supported at the moment.
 
 While it may be possible to create a "reload" command, there is no 
-consistent use of the SIGHIP signal to force a daemon to reload its 
+consistent use of the SIGHUP signal to force a daemon to reload its 
 settings, so there is no guarantee that this command will be 100% 
 consistent across all daemons.
