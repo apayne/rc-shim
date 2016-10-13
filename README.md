@@ -27,8 +27,8 @@ installing the script and files, and changing the default settings.
 
 It is assumed that you have a compatible supervisor installed,
 including but not limited to daemontools, daemontools-encore,
-runit, or s6.  You must have a set of run scripts for each service
-to be supervised, or the shim will not work.
+runit, or s6.  **You must have a set of run scripts for each service
+to be supervised, or the shim will not work.**
 
 ### Step 2 #
 
@@ -60,6 +60,9 @@ change will result in the shim running instead.
 # Limitations #
 
 ---
+
+You must have a definition for each daemon that will receive the shim.  
+If there is no definition, then the shim will fail.
 
 The script only supports three operations: stop, start, and restart.  A 
 common operation is to request a reload of settings.  This is not 
