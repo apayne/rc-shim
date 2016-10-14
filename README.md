@@ -20,17 +20,29 @@ system can be avoided.
 
 ---
 
-There are three basic steps to installation: installing a supervisor,
-installing the script and files, and changing the default settings.
+There are two pre-requisites and two basic steps to installation: 
+installing a supervisor, installing service definitions, installing the 
+script and files, and changing the default settings.
+
+### Prerequisite 1 #
+
+You have a compatible supervisor installed.  Currently, runit and s6 are 
+supported but nearly any daemontools-styled supervisor should work as 
+well, including daemontools, daemontools-encore, etc.
+
+### Prerequisite 2 #
+
+You have service definitions available for each service that will 
+receive the shim.  The defintions will reside at a "service definition 
+directory", which acts as a read-only repository.  There are a few of 
+these available in various forms, but creating them is beyond the scope 
+of this document.  The best I can recommend is to write them yourself.
+
+There are a few projects and collections out there if you search, and 
+you are impatient or desperate.
+
 
 ### Step 1 #
-
-It is assumed that you have a compatible supervisor installed,
-including but not limited to daemontools, daemontools-encore,
-runit, or s6.  **You must have a set of run scripts for each service
-to be supervised, or the shim will not work.**
-
-### Step 2 #
 
 There are three necessary files.  Two files contain shell environment 
 variables that are required to run the shim, and then there is the shim 
@@ -41,7 +53,10 @@ Typically this is at /etc/init.d for RedHat- and Debian-styled systems.  If
 this is not the case, please send all three files to the location where
 the actual rc control scripts live.
 
-### Step 3 #
+If you do not place the two settings file in the same location as the 
+shim, the shim will fail.
+
+### Step 2 #
 
 Once installed, you will simply move the old script aside and copy the 
 shim, using the same script name.  For example, to use the shim
