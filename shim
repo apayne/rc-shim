@@ -4,7 +4,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 # The following variables are defined:
 #
-# In distro-settings:
+# In os-settings:
 # PATH     the file path to be searched by this script
 # SVCDEF   the location of all service definitions
 # SVCDIR   the location of all active services
@@ -18,7 +18,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 # load settings for distribution
 # includes PATH
-. ./distro-settings
+. ./os-settings
 
 # detect if the settings were not changed.
 [ $PATH = "fail" ] && echo "Failed to PATH setting." && exit 1
