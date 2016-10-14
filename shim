@@ -2,6 +2,20 @@
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
+# The following variables are defined:
+#
+# In distro-settings:
+# PATH     the file path to be searched by this script
+# SVCDEF   the location of all service definitions
+# SVCDIR   the location of all active services
+
+# In supervisor-settings:
+# SERVICE  the name of the service to be controlled (by path)
+# SVCCTRL  the command used to control the supervisor
+# CMDSTART the command to be issued to the supervisor for staring the daemon
+# CMDSTOP  the command to be issued to the supervisor for stopping the daemon
+
+
 # load settings for distribution
 # includes PATH
 . ./distro-settings
