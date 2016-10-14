@@ -4,11 +4,19 @@
 # along with the location of the active supervision
 # directory with running service definitions.
 
+# this is the path to be searched when running the shim
 PATH=fail
+
+# this is where all service definitions reside
+SVCDEF=fail
+
+# this is where active services are controlled, typically
+# by a service-scan program associated with the supervisor.
 SVCDIR=fail
 
 # A sample configuration is provided.
 
 # Debian 7
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
+#SVCDEF=/etc/svcdef
 #SVCDIR=/etc/service
