@@ -31,8 +31,8 @@ case "$1" in
     # because we are explicitly asking it to start.
     [ -d $SERVICE ] || \
         cp -Rav $SVCDEF/$0 $SERVICE || \
-        echo "Failed to create service definition." && \
-        exit 1
+            echo "Failed to create service definition." && \
+            exit 1
     # attempt to start the service
     $SVCCTRL $CMDSTART $SERVICE
     exit $?
@@ -46,7 +46,9 @@ case "$1" in
     exit $?
     ;;
   reload)
-    # find the true PID of the daemon and send a SIGHUP
+    # intercept any reload calls and turn them into a NO-OP
+    # as we do not have a consistent method for telling a
+    # daemon to reload its settings.
     ;;
   *)
     echo "Usage: $0 {start|stop|restart}"
