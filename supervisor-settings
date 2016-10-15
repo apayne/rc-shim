@@ -5,23 +5,28 @@
 SVCCTRL=fail
 CMDSTOP=fail
 CMDSTART=fail
+SVCSTATUS=fail
 
 # daemontools
 #SVCCTRL=svc
 #CMDSTOP=stop
 #CMDSTART=start
+#SVCSTATUS="svstat"
 
 # daemontools-encore
 #SVCCTRL=svc
 #CMDSTOP=stop
 #CMDSTART=start
+#SVCSTATUS="svstat"
 
 # runit
 #SVCCTRL=sv
 #CMDSTOP=stop
 #CMDSTART=start
+#SVCSTATUS="sv status"
 
 # s6
 #SVCCTRL=s6-svc
 #CMDSTOP=stop
 #CMDSTART=start
+#SVCSTATUS="s6-svstat"

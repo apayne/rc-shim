@@ -10,9 +10,10 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # SVCDIR   the location of all active services
 
 # In supervisor-settings:
-# SVCCTRL  the command used to control the supervisor
-# CMDSTART the command to be issued to the supervisor for staring the daemon
-# CMDSTOP  the command to be issued to the supervisor for stopping the daemon
+# SVCCTRL   the command used to control the supervisor
+# SVCSTATUS the command to return the status of the supervised daemon
+# CMDSTART  the command to be issued to the supervisor for staring the daemon
+# CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
 
 # load settings for distribution
@@ -33,6 +34,7 @@ SERVICE=$SVCDIR/$0
 
 # detect if the settings were not changed.
 [ $SVCCTRL = "fail" ] && echo "Failed to load service control setting." && exit 1
+[ $SVCSTATUS = "fail" ] && echo "Failed to load service control setting." && exit 1
 [ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
 [ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
 
@@ -56,6 +58,10 @@ case "$1" in
     ;;
   restart)
     $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
+    exit $?
+    ;;
+  status)
+    $SVCSTATUS $SERVICE
     exit $?
     ;;
   reload)
