@@ -59,9 +59,11 @@ case "$1" in
     exit $?
     ;;
   reload)
-    # intercept any reload calls and turn them into a NO-OP
+    # intercept any reload calls and turn them into a failure,
     # as we do not have a consistent method for telling a
     # daemon to reload its settings.
+    echo "reload is not a supported operation."
+    exit 1
     ;;
   *)
     echo "Usage: $0 {start|stop|restart}"
