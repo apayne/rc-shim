@@ -41,7 +41,7 @@ SERVICE=$SVCDIR/$0
 
 case "$1" in
   start)
-    # detect if there is no definition present.  If so,
+    # Detect if there is no definition present.  If so,
     # copy the default definition to the active service directory
     # because we are explicitly asking it to start.
     [ -d $SERVICE ] || \
@@ -53,26 +53,35 @@ case "$1" in
     exit $?
     ;;
   stop)
+    # Ask the supervisor to stop the daemon.
     $SVCCTRL $CMDSTOP $SERVICE
     exit $?
     ;;
   restart)
+    # Ask the supervisor to stop, then start the daemon.
     $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
     exit $?
     ;;
   status)
+    # Ask the supervisor about the status of the daemon.
     $SVCSTATUS $SERVICE
     exit $?
     ;;
   reload)
-    # intercept any reload calls and turn them into a failure,
+    # Intercept any reload calls and turn them into a failure,
     # as we do not have a consistent method for telling a
     # daemon to reload its settings.
+
+    # This is by design.  If there are rc scripts that
+    # depend on this feature, they should receive a failure
+    # indication instead of silently accepting the operation
+    # as a success.
     echo "reload is not a supported operation."
     exit 1
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart}"
+    # Provide a catch-all to explain what are valid commands.
+    echo "Usage: $0 {start|stop|restart|status}"
     exit 1
     ;;
 esac
