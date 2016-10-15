@@ -34,7 +34,7 @@ SERVICE=$SVCDIR/$0
 
 # detect if the settings were not changed.
 [ $SVCCTRL = "fail" ] && echo "Failed to load service control setting." && exit 1
-[ $SVCSTATUS = "fail" ] && echo "Failed to load service control setting." && exit 1
+[ $SVCSTATUS = "fail" ] && echo "Failed to load service status setting." && exit 1
 [ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
 [ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
 
