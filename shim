@@ -10,7 +10,6 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 # SVCDIR   the location of all active services
 
 # In supervisor-settings:
-# SERVICE  the name of the service to be controlled (by path)
 # SVCCTRL  the command used to control the supervisor
 # CMDSTART the command to be issued to the supervisor for staring the daemon
 # CMDSTOP  the command to be issued to the supervisor for stopping the daemon
