@@ -13,6 +13,9 @@
 # CMDSTART  the command to be issued to the supervisor for staring the daemon
 # CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
+# What is my name?
+MYNAME=$( basename $0 )
+
 # load settings for distribution
 # includes PATH
 . ./os-settings
@@ -22,7 +25,7 @@
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
 # set the service to point to its associated definition
-SERVICE=$SVCDIR/$0
+SERVICE=$SVCDIR/$MYNAME
 
 
 # load settings for the supervision environment
@@ -42,7 +45,7 @@ case "$1" in
     # copy the default definition to the active service directory
     # because we are explicitly asking it to start.
     [ -d $SERVICE ] || \
-        cp -Rav $SVCDEF/$0 $SERVICE || \
+        cp -Rav $SVCDEF/$MYNAME $SERVICE || \
             echo "Failed to create service definition." && \
             exit 1
     # attempt to start the service
@@ -78,7 +81,7 @@ case "$1" in
     ;;
   *)
     # Provide a catch-all to explain what are valid commands.
-    echo "Usage: $0 {start|stop|restart|status}"
+    echo "Usage: $MYNAME {start|stop|restart|status}"
     exit 1
     ;;
 esac
