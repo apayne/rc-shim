@@ -16,9 +16,12 @@
 # What is my name?
 MYNAME=$( basename $0 )
 
+# Where do I live? (i.e. where is my init.d collection)
+MYHOME=$( dirname $0 )
+
 # load settings for distribution
 # includes PATH
-. ./os-settings
+. $MYHOME/os-settings
 
 # detect if the settings were not changed.
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
@@ -27,10 +30,9 @@ MYNAME=$( basename $0 )
 # set the service to point to its associated definition
 SERVICE=$SVCDIR/$MYNAME
 
-
 # load settings for the supervision environment
 # includes SVCCTRL, CMDSTART, CMDSTOP
-. ./supervisor-settings
+. $MYHOME/supervisor-settings
 
 # detect if the settings were not changed.
 [ "$SVCCTRL" = "fail" ] && echo "Failed to load service control setting." && exit 1
