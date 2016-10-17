@@ -13,11 +13,13 @@
 # CMDSTART  the command to be issued to the supervisor for staring the daemon
 # CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
+
 # What is my name?
 MYNAME=$( basename $0 )
 
 # Where do I live? (i.e. where is my init.d collection)
 MYHOME=$( dirname $0 )
+
 
 # load settings for distribution
 # includes PATH
@@ -27,8 +29,10 @@ MYHOME=$( dirname $0 )
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
+
 # set the service to point to its associated definition
 INSTANCE=$SVCDIR/$MYNAME
+
 
 # load settings for the supervision environment
 # includes SVCCTRL, CMDSTART, CMDSTOP
@@ -41,15 +45,17 @@ INSTANCE=$SVCDIR/$MYNAME
 [ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
 
 
+# Pre-check that $INSTANCE exists, otherwise
+# any supervisor command is guaranteed to fail.
+if [ ! -d $INSTANCE ];
+then
+  echo "$MYNAME: no definition exists at $INSTANCE"
+fi
+
+
+# Process the request
 case "$1" in
   start)
-    # Detect if there is no definition present.  If so,
-    # copy the default definition to the active service directory
-    # because we are explicitly asking it to start.
-    [ ! -d $INSTANCE ] && \
-        cp -Rav $SVCDEF/$MYNAME $INSTANCE || \
-            echo "Failed to create service definition." && \
-            exit 1
     # Ask the supervisor to start the daemon.
     $SVCCTRL $CMDSTART $MYNAME
     exit $?
