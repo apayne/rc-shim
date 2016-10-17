@@ -13,13 +13,12 @@
 # CMDSTART  the command to be issued to the supervisor for staring the daemon
 # CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
-
 # load settings for distribution
 # includes PATH
 . ./os-settings
 
 # detect if the settings were not changed.
-[ "$PATH" = "fail" ] && echo "Failed to PATH setting." && exit 1
+[ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
 # set the service to point to its associated definition
