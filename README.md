@@ -79,11 +79,16 @@ change will result in the shim running instead.
 You must have a definition for each daemon that will receive the shim.  
 If there is no definition, then the shim will fail.
 
-The script only supports three operations: stop, start, and restart.  A 
-common operation is to request a reload of settings.  This is not 
-supported at the moment.
+The script only supports three operations: stop, start, restart, and 
+status.  A common operation is to request a reload of settings.  This is 
+not supported at the moment.  While it may be possible to create a 
+"reload" command, there is no consistent use of the SIGHUP signal to 
+force a daemon to reload its settings, so there is no guarantee that 
+this command will be 100% consistent across all daemons.
 
-While it may be possible to create a "reload" command, there is no 
-consistent use of the SIGHUP signal to force a daemon to reload its 
-settings, so there is no guarantee that this command will be 100% 
-consistent across all daemons.
+Some rc scripts will attempt to load multiple daemons at the same time.  
+This is contrary to supervision, where typically there is one supervisor 
+for each daemon.  A work-around for this is to create a set of service 
+definitions that launch from a separate service scan, and to make the 
+shim launch it instead.  The shim will control the service scan program, 
+which in turn will bring the individual daemons up/down as needed.
