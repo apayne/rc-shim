@@ -21,8 +21,8 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 . ./os-settings
 
 # detect if the settings were not changed.
-[ $PATH = "fail" ] && echo "Failed to PATH setting." && exit 1
-[ $SVCDIR = "fail" ] && echo "Failed to load service directory location setting." && exit 1
+[ "$PATH" = "fail" ] && echo "Failed to PATH setting." && exit 1
+[ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
 # set the service to point to its associated definition
 SERVICE=$SVCDIR/$0
@@ -33,10 +33,10 @@ SERVICE=$SVCDIR/$0
 . ./supervisor-settings
 
 # detect if the settings were not changed.
-[ $SVCCTRL = "fail" ] && echo "Failed to load service control setting." && exit 1
-[ $SVCSTATUS = "fail" ] && echo "Failed to load service status setting." && exit 1
-[ $CMDSTOP = "fail" ] && echo "Failed to service stop setting." && exit 1
-[ $CMDSTART = "fail" ] && echo "Failed to load service start setting." && exit 1
+[ "$SVCCTRL" = "fail" ] && echo "Failed to load service control setting." && exit 1
+[ "$SVCSTATUS" = "fail" ] && echo "Failed to load service status setting." && exit 1
+[ "$CMDSTOP" = "fail" ] && echo "Failed to service stop setting." && exit 1
+[ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
 
 
 case "$1" in
