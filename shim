@@ -28,7 +28,7 @@ MYHOME=$( dirname $0 )
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
 # set the service to point to its associated definition
-SERVICE=$SVCDIR/$MYNAME
+INSTANCE=$SVCDIR/$MYNAME
 
 # load settings for the supervision environment
 # includes SVCCTRL, CMDSTART, CMDSTOP
@@ -46,27 +46,27 @@ case "$1" in
     # Detect if there is no definition present.  If so,
     # copy the default definition to the active service directory
     # because we are explicitly asking it to start.
-    [ -d $SERVICE ] || \
-        cp -Rav $SVCDEF/$MYNAME $SERVICE || \
+    [ ! -d $INSTANCE ] && \
+        cp -Rav $SVCDEF/$MYNAME $INSTANCE || \
             echo "Failed to create service definition." && \
             exit 1
-    # attempt to start the service
-    $SVCCTRL $CMDSTART $SERVICE
+    # Ask the supervisor to start the daemon.
+    $SVCCTRL $CMDSTART $MYNAME
     exit $?
     ;;
   stop)
     # Ask the supervisor to stop the daemon.
-    $SVCCTRL $CMDSTOP $SERVICE
+    $SVCCTRL $CMDSTOP $MYNAME
     exit $?
     ;;
   restart)
     # Ask the supervisor to stop, then start the daemon.
-    $SVCCTRL $CMDSTOP $SERVICE && $SVCCTRL $CMDSTART $SERVICE
+    $SVCCTRL $CMDSTOP $MYNAME && $SVCCTRL $CMDSTART $MYNAME
     exit $?
     ;;
   status)
     # Ask the supervisor about the status of the daemon.
-    $SVCSTATUS $SERVICE
+    $SVCSTATUS $MYNAME
     exit $?
     ;;
   reload)
