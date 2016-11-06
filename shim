@@ -11,7 +11,14 @@
 ### END INIT INFO
 
 # The following variables are defined:
-#
+
+# In this script:
+# MYHOME      the location of init.d scripts
+# MYNAME      the name of this script (as it is called)
+# SVCNAME     the name of the service
+# SVCDEFNAME  the path name of the service definition
+# INSTANCE    the path name of the live service
+
 # In os-settings:
 # PATH     the file path to be searched by this script
 # SVCDEF   the location of all service definitions
@@ -24,11 +31,27 @@
 # CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
 
-# What is my name?
-MYNAME=$( basename $0 )
 
 # Where do I live? (i.e. where is my init.d collection)
 MYHOME=$( dirname $0 )
+
+# What is my (script) name?
+MYNAME=$( basename $0 )
+
+# What is my (daemon) name?
+SVCNAME=$MYNAME
+
+# By default, the service definition name is the same as $MYNAME, but in
+# some cases you may wish to have a different service definition.  When
+# that happens, simply uncomment and change the line below.
+#SVCNAME="unknown"
+
+# What service definition should I use to control the daemon?
+SVCDEFNAME=$SVCDEF/$SVCNAME
+
+# Where is the (live) supervision directory for the daemon?
+INSTANCE=$SVCDIR/$SVCNAME
+
 
 
 # load settings for distribution
@@ -39,9 +62,6 @@ MYHOME=$( dirname $0 )
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
-
-# set the service to point to its associated definition
-INSTANCE=$SVCDIR/$MYNAME
 
 
 # load settings for the supervision environment
@@ -67,17 +87,17 @@ fi
 case "$1" in
   start)
     # Ask the supervisor to start the daemon.
-    $SVCCTRL $CMDSTART $MYNAME
+    $SVCCTRL $CMDSTART $INSTANCE
     exit $?
     ;;
   stop)
     # Ask the supervisor to stop the daemon.
-    $SVCCTRL $CMDSTOP $MYNAME
+    $SVCCTRL $CMDSTOP $INSTANCE
     exit $?
     ;;
   restart)
     # Ask the supervisor to stop, then start the daemon.
-    $SVCCTRL $CMDSTOP $MYNAME && $SVCCTRL $CMDSTART $MYNAME
+    $SVCCTRL $CMDSTOP $INSTANCE && $SVCCTRL $CMDSTART $INSTANCE
     exit $?
     ;;
   status)
