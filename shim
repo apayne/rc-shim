@@ -31,16 +31,21 @@
 # CMDSTART  the command to be issued to the supervisor for staring the daemon
 # CMDSTOP   the command to be issued to the supervisor for stopping the daemon
 
-
+# Change DEBUG to 1 instead of 0 to display values at runtime.
+DEBUG=0
+[ $DEBUG -eq 1 ] && echo "DEBUG mode is on."
 
 # Where do I live? (i.e. where is my init.d collection)
 MYHOME=$( dirname $0 )
+[ $DEBUG -eq 1 ] && echo "MYHOME: $MYHOME"
 
 # What is my (script) name?
 MYNAME=$( basename $0 )
+[ $DEBUG -eq 1 ] && echo "MYNAME: $MYNAME"
 
 # What is my (daemon) name?
 SVCNAME=$MYNAME
+[ $DEBUG -eq 1 ] && echo "SVCNAME: $SVCNAME"
 
 # By default, the service definition name is the same as $MYNAME, but in
 # some cases you may wish to have a different service definition.  When
@@ -49,9 +54,7 @@ SVCNAME=$MYNAME
 
 # What service definition should I use to control the daemon?
 SVCDEFNAME=$SVCDEF/$SVCNAME
-
-# Where is the (live) supervision directory for the daemon?
-LIVESVC=$SVCDIR/$SVCNAME
+[ $DEBUG -eq 1 ] && echo "SVCDEFNAME: $SVCDEFNAME"
 
 
 
@@ -63,6 +66,9 @@ LIVESVC=$SVCDIR/$SVCNAME
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 
+# Where is the (live) supervision directory for the daemon?
+LIVESVC=$SVCDIR/$SVCNAME
+[ $DEBUG -eq 1 ] && "LIVESVC: $LIVESVC"
 
 
 # load settings for the supervision environment
