@@ -79,7 +79,7 @@ INSTANCE=$SVCDIR/$SVCNAME
 # any supervisor command is guaranteed to fail.
 if [ ! -d $INSTANCE ];
 then
-  echo "$MYNAME: no definition exists at $INSTANCE"
+  echo "$MYNAME: no live definition exists at $INSTANCE"
 fi
 
 
