@@ -13,11 +13,11 @@
 # The following variables are defined:
 
 # In this script:
-# MYHOME      the location of init.d scripts
-# MYNAME      the name of this script (as it is called)
+# MYHOME      the detected location of init.d scripts
+# MYNAME      the name of this script as called
 # SVCNAME     the name of the service
 # SVCDEFNAME  the path name of the service definition
-# INSTANCE    the path name of the live service
+# LIVESVC    the path name of the live service
 
 # In os-settings:
 # PATH     the file path to be searched by this script
@@ -50,7 +50,7 @@ SVCNAME=$MYNAME
 SVCDEFNAME=$SVCDEF/$SVCNAME
 
 # Where is the (live) supervision directory for the daemon?
-INSTANCE=$SVCDIR/$SVCNAME
+LIVESVC=$SVCDIR/$SVCNAME
 
 
 
@@ -75,11 +75,11 @@ INSTANCE=$SVCDIR/$SVCNAME
 [ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
 
 
-# Pre-check that $INSTANCE exists, otherwise
+# Pre-check that $LIVESVC exists, otherwise
 # any supervisor command is guaranteed to fail.
-if [ ! -d $INSTANCE ];
+if [ ! -d $LIVESVC ];
 then
-  echo "$MYNAME: no live definition exists at $INSTANCE"
+  echo "$MYNAME: no live definition exists at $LIVESVC"
 fi
 
 
@@ -87,17 +87,17 @@ fi
 case "$1" in
   start)
     # Ask the supervisor to start the daemon.
-    $SVCCTRL $CMDSTART $INSTANCE
+    $SVCCTRL $CMDSTART $LIVESVC
     exit $?
     ;;
   stop)
     # Ask the supervisor to stop the daemon.
-    $SVCCTRL $CMDSTOP $INSTANCE
+    $SVCCTRL $CMDSTOP $LIVESVC
     exit $?
     ;;
   restart)
     # Ask the supervisor to stop, then start the daemon.
-    $SVCCTRL $CMDSTOP $INSTANCE && $SVCCTRL $CMDSTART $INSTANCE
+    $SVCCTRL $CMDSTOP $LIVESVC && $SVCCTRL $CMDSTART $LIVESVC
     exit $?
     ;;
   status)
