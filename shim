@@ -52,10 +52,6 @@ SVCNAME=$MYNAME
 # that happens, simply uncomment and change the line below.
 #SVCNAME="unknown"
 
-# What service definition should I use to control the daemon?
-SVCDEFNAME=$SVCDEF/$SVCNAME
-[ $DEBUG -eq 1 ] && echo "SVCDEFNAME: $SVCDEFNAME"
-
 
 
 # load settings for distribution
@@ -71,6 +67,10 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 # Where is the (live) supervision directory for the daemon?
 LIVESVC=$SVCDIR/$SVCNAME
 [ $DEBUG -eq 1 ] && echo "LIVESVC: $LIVESVC"
+
+# What service definition should I use to control the daemon?
+SVCDEFNAME=$SVCDEF/$SVCNAME
+[ $DEBUG -eq 1 ] && echo "SVCDEFNAME: $SVCDEFNAME"
 
 
 # load settings for the supervision environment
