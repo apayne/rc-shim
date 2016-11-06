@@ -10,6 +10,7 @@
 # Description:       Shim to launch a supervisor.
 ### END INIT INFO
 
+
 # The following variables are defined:
 
 # In this script:
@@ -105,16 +106,11 @@ case "$1" in
     $SVCSTATUS $MYNAME
     exit $?
     ;;
-  reload)
-    # Intercept any reload calls and turn them into a failure,
-    # as we do not have a consistent method for telling a
-    # daemon to reload its settings.
-
-    # This is by design.  If there are rc scripts that
-    # depend on this feature, they should receive a failure
-    # indication instead of silently accepting the operation
-    # as a success.
-    echo "reload is not a supported operation."
+  force-reload)
+    # LSB 3.1 specifies this as a mandatory command, but
+    # there is no consistent method for enforcing it with
+    # supervision.  By default, the command will fail.
+    echo "forced reload is not a supported operation."
     exit 1
     ;;
   *)
@@ -125,3 +121,4 @@ case "$1" in
 esac
 
 exit 0
+
