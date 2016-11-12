@@ -200,7 +200,7 @@ case "$1" in
     else
       # No service link was found, so by default the service
       # cannot be running.
-      echo "$MYNAME: No service scan link was found, service is not running."
+      echo "$MYNAME: No service link was found, service is not supervised."
       LASTRESULT=0
     fi
 
