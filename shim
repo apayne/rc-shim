@@ -23,9 +23,10 @@
 # STARTWAIT   the number of seconds to wait for successful start
 
 # In os-settings:
-# PATH     the file path to be searched by this script
-# SVCDEF   the location of all service definitions
-# SVCDIR   the location of all active services
+# PATH      the file path to be searched by this script
+# SVCDEF    the location of all service definitions
+# SVCDIR    the location of all active services
+# STARTWAIT the amount of time to wait on service start checks
 
 # In supervisor-settings:
 # SVCCTRL   the command used to control the supervisor
@@ -40,10 +41,12 @@ DEBUG=0
 # Define the result scratchpad
 LASTRESULT=0
 
-# Number of seconds to wait for supervisor to report back.
-# If set to -1, the start of the service is left to the
-# supervisor and is considered an "asynchronous" start
-STARTWAIT=7
+# Per-service override of the systemw-wide service check
+# wait time. This is the number of seconds to wait for
+# supervisor to report back. If set to -1, the start of
+# the service is left to the supervisor and is considered
+# an "asynchronous" start
+#STARTWAIT=7
 
 # Where do I live? (i.e. where is my init.d collection)
 MYHOME=$( dirname $0 )
@@ -213,7 +216,7 @@ case "$1" in
     else
       # With no service scan link present, assume the supervisor
       # does not have the daemon running.
-      echo "$MYNAME: no service link present."
+      echo "$MYNAME: no service link present in $SVCSCAN"
       LASTRESULT=0
 
     fi

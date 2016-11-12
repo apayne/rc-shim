@@ -4,19 +4,51 @@
 # along with the location of the active supervision
 # directory with running service definitions.
 
-# this is the path to be searched when running the shim
+# ------------------------------------------------------------
+# This is the path to be searched when running the shim
 PATH=fail
 
-# this is where all service definitions reside
+
+# ------------------------------------------------------------
+# This is where all service definitions reside
 SVCDEF=fail
 
-# this is where active services are controlled, typically
+
+# ------------------------------------------------------------
+# This is where active services are controlled, typically
 # by a service-scan program associated with the supervisor.
 SVCDIR=fail
 
-# A sample configuration is provided.
 
-# Debian 7
+# ------------------------------------------------------------
+# This is the amount of time in seconds to wait for the service
+# scan to bring up the supervisor, before declaring a failure
+# the default value is 7 seconds
+STARTWAIT=7
+
+
+# ------------------------------------------------------------
+# If you are not as concerned about the result of the start,
+# or need to have the service start process faster, you can
+# use an asynchronous start, which skips the service check and 
+# leaves it to the supervisor to handle the startup.
+# This can be overriden in each individual shim.
+# ------------------------------------------------------------
+# Comment out the entry above, and uncomment the entry below
+# to enable system-wide asynchronous start.  This is NOT recommended.
+#STARTWAIT=-1
+
+
+# Sample configurations are provided.  Feel free to add your own.
+
+# Debian 7 with asynchronous start (to mimic parallel rc)
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
 #SVCDIR=/etc/service
+#STARTWAIT=-1
+
+# Debian 7 with regular start (each service is checked)
+#PATH=/sbin:/bin:/usr/sbin:/usr/bin
+#SVCDEF=/etc/svcdef
+#SVCDIR=/etc/service
+#STARTWAIT=7
