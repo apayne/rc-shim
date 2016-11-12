@@ -196,16 +196,28 @@ case "$1" in
     ;;
 
   stop)
-    # Ask the supervisor to stop the daemon.
-    $SVCCTRL $CMDSTOP $SVCNAME
-    LASTRESULT=$?
-
-    # After a successful stop, remove the service link.
-    if [ $LASTRESULT -eq 0 ];
+    # A service scan link of the live instance needs to exist.
+    if [ -L $SVCSCAN/$SVCNAME ];
     then
-      rm $SVCSCAN/$SVCNAME
+      # Ask the supervisor to stop the daemon.
+      $SVCCTRL $CMDSTOP $SVCNAME
       LASTRESULT=$?
+
+      # After a successful stop, remove the service link.
+      if [ $LASTRESULT -eq 0 ];
+      then
+        rm $SVCSCAN/$SVCNAME
+        LASTRESULT=$?
+      fi
+
+    else
+      # With no service scan link present, assume the supervisor
+      # does not have the daemon running.
+      echo "$MYNAME: no service link present."
+      LASTRESULT=0
+
     fi
+
     exit $LASTRESULT
     ;;
 
