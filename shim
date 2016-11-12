@@ -41,7 +41,7 @@ DEBUG=0
 LASTRESULT=0
 
 # Number of seconds to wait for supervisor to report back.
-# If set to zero, the start of the service is left to the
+# If set to -1, the start of the service is left to the
 # supervisor and is considered an "asynchronous" start
 STARTWAIT=7
 
@@ -146,7 +146,7 @@ case "$1" in
       # NOTE: runit provides feedback that requires we send output to /dev/null
       $SVCSTATUS $SVCNAME >/dev/null
       LASTRESULT=$?
-      until [ $STARTWAIT -eq 0 -o $LASTRESULT -eq 0 ];
+      until [ $STARTWAIT -lt 1 -o $LASTRESULT -eq 0 ];
       do
         sleep 1 # pause before checking again
         $SVCSTATUS $SVCNAME >/dev/null
@@ -154,16 +154,41 @@ case "$1" in
         STARTWAIT=`expr $STARTWAIT - 1`
       done
 
-      #
-      if [ $LASTRESULT -eq 0 -a $STARTWAIT -gt 0 ];
-      then
-        $SVCCTRL $CMDSTART $SVCNAME
-        LASTRESULT=$?
-      else
-        # supervisor does not appear to be successful in launching.
-        echo "$MYNAME: ERROR: supervisor was not successfully launched."
-        exit 1
-      fi
+      # tell the supervisor to start the service
+      case "$STARTWAIT" in
+
+        -1)
+          # "asynchronous" start, leave it to the supervisor
+          # to handle the launch and return success immediately.
+          # NOTE: there is always a chance that the supervisor
+          # will not be able to start the service, use this
+          # setting with caution!
+          echo "$MYNAME: WARNING: asynchronous start via supervisor."
+          exit 0
+          ;;
+
+        0)
+          # the timer ran out, as a result there may be a
+          # failure, check the result of the last status check
+          if [ $LASTRESULT -eq 0 ];
+          then
+            # there is a chance it will start.  Ask the supervisor.
+            $SVCCTRL $CMDSTART $SVCNAME
+            LASTRESULT=$?
+          else
+            # failure.
+            echo "$MYNAME: ERROR: supervisor was not successfully launched."
+            exit 1
+          fi
+          ;;
+
+        *)
+          # status reported back with time to spare, ask the supervisor to start the service.
+          $SVCCTRL $CMDSTART $SVCNAME
+          LASTRESULT=$?
+          ;;
+
+      esac
 
     fi
 
@@ -190,6 +215,7 @@ case "$1" in
     LASTRESULT=$?
     exit $LASTRESULT
     ;;
+
   status)
     # A service scan link of the live instance needs to exist.
     if [ -L $SVCSCAN/$SVCNAME ];
