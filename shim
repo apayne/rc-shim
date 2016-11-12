@@ -41,13 +41,6 @@ DEBUG=0
 # Define the result scratchpad
 LASTRESULT=0
 
-# Per-service override of the systemw-wide service check
-# wait time. This is the number of seconds to wait for
-# supervisor to report back. If set to -1, the start of
-# the service is left to the supervisor and is considered
-# an "asynchronous" start
-#STARTWAIT=7
-
 # Where do I live? (i.e. where is my init.d collection)
 MYHOME=$( dirname $0 )
 [ $DEBUG -eq 1 ] && echo "MYHOME: $MYHOME"
@@ -75,9 +68,18 @@ SVCNAME=$MYNAME
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ "$SVCDEF" = "fail" ] && echo "Failed to load service directory definition setting." && exit 1
 [ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
+[ "$STARTWAIT" = "fail" ] && echo "Failed to load service start check wait." && exit 1
 [ $DEBUG -eq 1 ] && echo "PATH: $PATH"
 [ $DEBUG -eq 1 ] && echo "SVCDEF: $SVCDEF"
 [ $DEBUG -eq 1 ] && echo "SVCDIR: $SVCDIR"
+[ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
+
+# Per-service override of the system-wide service check
+# wait time. This is the number of seconds to wait for
+# supervisor to report back. If set to -1, the start of
+# the service is left to the supervisor and is considered
+# an "asynchronous" start
+#STARTWAIT=7
 
 # Where is the (live) supervision directory for the daemon?
 LIVESVC=$SVCDIR/$SVCNAME
