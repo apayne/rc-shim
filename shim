@@ -191,9 +191,19 @@ case "$1" in
     exit $LASTRESULT
     ;;
   status)
-    # Ask the supervisor about the status of the daemon.
-    $SVCSTATUS $MYNAME
-    LASTRESULT=$?
+    # A service scan link of the live instance needs to exist.
+    if [ -L $SVCSCAN/$SVCNAME ];
+    then
+      # Ask the supervisor about the status of the daemon.
+      $SVCSTATUS $MYNAME
+      LASTRESULT=$?
+    else
+      # No service link was found, so by default the service
+      # cannot be running.
+      echo "$MYNAME: No service scan link was found, service is not running."
+      LASTRESULT=0
+    fi
+
     exit $LASTRESULT
     ;;
   force-reload)
