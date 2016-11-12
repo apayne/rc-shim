@@ -19,6 +19,7 @@
 # SVCNAME     the name of the service
 # SVCDEFNAME  the path name of the service definition
 # LIVESVC    the path name of the live service
+# LASTRESULT  the return code of the last command
 
 # In os-settings:
 # PATH     the file path to be searched by this script
@@ -101,22 +102,26 @@ case "$1" in
   start)
     # Ask the supervisor to start the daemon.
     $SVCCTRL $CMDSTART $LIVESVC
-    exit $?
+    LASTRESULT=$?
+    exit $LASTRESULT
     ;;
   stop)
     # Ask the supervisor to stop the daemon.
     $SVCCTRL $CMDSTOP $LIVESVC
-    exit $?
+    LASTRESULT=$?
+    exit $LASTRESULT
     ;;
   restart)
     # Ask the supervisor to stop, then start the daemon.
     $SVCCTRL $CMDSTOP $LIVESVC && $SVCCTRL $CMDSTART $LIVESVC
-    exit $?
+    LASTRESULT=$?
+    exit $LASTRESULT
     ;;
   status)
     # Ask the supervisor about the status of the daemon.
     $SVCSTATUS $MYNAME
-    exit $?
+    LASTRESULT=$?
+    exit $LASTRESULT
     ;;
   force-reload)
     # LSB 3.1 specifies this as a mandatory command, but
