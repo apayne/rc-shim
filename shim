@@ -107,122 +107,155 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 
 
 
-# Process the request
-case "$1" in
-  start)
-    # A service definition needs to exist.
-    if [ ! -d $SVCDEF/$SVCNAME ];
-    then
-      echo "$MYNAME: cannot start service without a definition.  Aborting."
-      exit 1
-    else
-      [ $DEBUG -eq 1 ] && echo "Service definition found at $SVCDEF/$SVCNAME."
-    fi
+# ----------------------------------------------------------------------------
+# Internal defintions are moved here to make it
+# easier to issue a restart command by re-using
+# existing start/stop code.
+# ----------------------------------------------------------------------------
 
-    # A live instance of the service definition needs to exist.
-    if [ ! -d $LIVESVC ];
-    then
-      echo "$MYNAME: cannot start service without a live instance.  Aborting."
-      exit 1
-    else
-      [ $DEBUG -eq 1 ] && echo "Service live instance found at $LIVESVC."
-    fi
 
-    # A service scan link of the live instance needs to exist.
-    if [ -L $SVCSCAN/$SVCNAME ];
-    then
-      [ $DEBUG -eq 1 ] && echo "$MYNAME: WARNING: service scan link already exists."
-    else
-      ln -s $LIVESVC $SVCSCAN/$SVCNAME
-      LASTRESULT=$?
-      [ $DEBUG -eq 1 ] && echo "$MYNAME: service scan link created."
-    fi
+start_service()
+{
+  # A service definition needs to exist.
+  if [ ! -d $SVCDEF/$SVCNAME ];
+  then
+    echo "$MYNAME: cannot start service without a definition.  Aborting."
+    exit 1
+  else
+    [ $DEBUG -eq 1 ] && echo "Service definition found at $SVCDEF/$SVCNAME."
+  fi
 
-    # After a successful link, start the daemon.
-    if [ $LASTRESULT -eq 0 ];
-    then
-      # wait for a confirmation that a supervisor is running for the service
-      # NOTE: runit provides feedback that requires we send output to /dev/null
+  # A live instance of the service definition needs to exist.
+  if [ ! -d $LIVESVC ];
+  then
+    echo "$MYNAME: cannot start service without a live instance.  Aborting."
+    exit 1
+  else
+    [ $DEBUG -eq 1 ] && echo "Service live instance found at $LIVESVC."
+  fi
+
+  # A service scan link of the live instance needs to exist.
+  if [ -L $SVCSCAN/$SVCNAME ];
+  then
+    [ $DEBUG -eq 1 ] && echo "$MYNAME: WARNING: service scan link already exists."
+  else
+    ln -s $LIVESVC $SVCSCAN/$SVCNAME
+    LASTRESULT=$?
+    [ $DEBUG -eq 1 ] && echo "$MYNAME: service scan link created."
+  fi
+
+  # After a successful link, start the daemon.
+  if [ $LASTRESULT -eq 0 ];
+  then
+    # wait for a confirmation that a supervisor is running for the service
+    # NOTE: runit provides feedback that requires we send output to /dev/null
+    $SVCSTATUS $SVCNAME >/dev/null
+    LASTRESULT=$?
+    until [ $STARTWAIT -lt 1 -o $LASTRESULT -eq 0 ];
+    do
+      sleep 1 # pause before checking again
       $SVCSTATUS $SVCNAME >/dev/null
       LASTRESULT=$?
-      until [ $STARTWAIT -lt 1 -o $LASTRESULT -eq 0 ];
-      do
-        sleep 1 # pause before checking again
-        $SVCSTATUS $SVCNAME >/dev/null
-        LASTRESULT=$?
-        STARTWAIT=`expr $STARTWAIT - 1`
-      done
+      STARTWAIT=`expr $STARTWAIT - 1`
+    done
 
-      # tell the supervisor to start the service
-      case "$STARTWAIT" in
+    # tell the supervisor to start the service
+    case "$STARTWAIT" in
 
-        -1)
-          # "asynchronous" start, leave it to the supervisor
-          # to handle the launch and return success immediately.
-          # NOTE: there is always a chance that the supervisor
-          # will not be able to start the service, use this
-          # setting with caution!
-          echo "$MYNAME: WARNING: asynchronous start via supervisor."
-          exit 0
-          ;;
+      -1)
+        # "asynchronous" start, leave it to the supervisor
+        # to handle the launch and return success immediately.
+        # NOTE: there is always a chance that the supervisor
+        # will not be able to start the service, use this
+        # setting with caution!
+        echo "$MYNAME: WARNING: asynchronous start via supervisor."
+        exit 0
+        ;;
 
-        0)
-          # the timer ran out, as a result there may be a
-          # failure, check the result of the last status check
-          if [ $LASTRESULT -eq 0 ];
-          then
-            # there is a chance it will start.  Ask the supervisor.
-            $SVCCTRL $CMDSTART $SVCNAME
-            LASTRESULT=$?
-          else
-            # failure.
-            echo "$MYNAME: ERROR: supervisor was not successfully launched."
-            exit 1
-          fi
-          ;;
-
-        *)
-          # status reported back with time to spare, ask the supervisor to start the service.
+      0)
+        # the timer ran out, as a result there may be a
+        # failure, check the result of the last status check
+        if [ $LASTRESULT -eq 0 ];
+        then
+          # there is a chance it will start.  Ask the supervisor.
           $SVCCTRL $CMDSTART $SVCNAME
           LASTRESULT=$?
-          ;;
+        else
+          # failure.
+          echo "$MYNAME: ERROR: supervisor was not successfully launched."
+          exit 1
+        fi
+        ;;
 
-      esac
+      *)
+        # status reported back with time to spare, ask the supervisor to start the service.
+        $SVCCTRL $CMDSTART $SVCNAME
+        LASTRESULT=$?
+        ;;
 
+    esac
+
+  fi
+
+  return $LASTRESULT
+}
+
+
+stop_service()
+{
+  # A service scan link of the live instance needs to exist.
+  if [ -L $SVCSCAN/$SVCNAME ];
+  then
+    # Ask the supervisor to stop the daemon.
+    $SVCCTRL $CMDSTOP $SVCNAME
+    LASTRESULT=$?
+
+    # After a successful stop, remove the service link.
+    if [ $LASTRESULT -eq 0 ];
+    then
+      rm $SVCSCAN/$SVCNAME
+      LASTRESULT=$?
     fi
 
+  else
+    # With no service scan link present, assume the supervisor
+    # does not have the daemon running.
+    echo "$MYNAME: no service link present in $SVCSCAN"
+    LASTRESULT=0
+
+  fi
+
+  return $LASTRESULT
+}
+
+
+# ----------------------------------------------------------------------------
+# Process the requested start/stop/restart/status/force-reload command
+# ----------------------------------------------------------------------------
+
+case "$1" in
+  start)
+    # Start the service, creating the service link if necessary.
+    start_service
+    LASTERSULT=$?
     exit $LASTRESULT
     ;;
 
   stop)
-    # A service scan link of the live instance needs to exist.
-    if [ -L $SVCSCAN/$SVCNAME ];
-    then
-      # Ask the supervisor to stop the daemon.
-      $SVCCTRL $CMDSTOP $SVCNAME
-      LASTRESULT=$?
-
-      # After a successful stop, remove the service link.
-      if [ $LASTRESULT -eq 0 ];
-      then
-        rm $SVCSCAN/$SVCNAME
-        LASTRESULT=$?
-      fi
-
-    else
-      # With no service scan link present, assume the supervisor
-      # does not have the daemon running.
-      echo "$MYNAME: no service link present in $SVCSCAN"
-      LASTRESULT=0
-
-    fi
-
+    # Stop the service, removing the service link
+    stop_service
+    LASTRESULT=$?
     exit $LASTRESULT
     ;;
 
   restart)
-    # Ask the supervisor to stop, then start the daemon.
-    $SVCCTRL $CMDSTOP $LIVESVC && $SVCCTRL $CMDSTART $LIVESVC
+    # Stop the service, removing the service link.
+    # If the service is already stopped or missing a link,
+    # ignore it and proceed.
+    stop_service
+
+    # Start the service, creating the service link if necessary.
+    start_service
     LASTRESULT=$?
     exit $LASTRESULT
     ;;
@@ -243,6 +276,7 @@ case "$1" in
 
     exit $LASTRESULT
     ;;
+
   force-reload)
     # LSB 3.1 specifies this as a mandatory command, but
     # there is no consistent method for enforcing it with
@@ -252,11 +286,13 @@ case "$1" in
     echo "forced reload is not a supported operation."
     exit 1
     ;;
+
   *)
     # Provide a catch-all to explain what are valid commands.
     echo "Usage: $MYNAME {start|stop|restart|status}"
     exit 1
     ;;
+
 esac
 
 exit 0
