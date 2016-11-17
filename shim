@@ -229,6 +229,18 @@ stop_service()
 }
 
 
+force_reload_service()
+{
+  # LSB 3.1 specifies this as a mandatory command, but
+  # there is no consistent method for enforcing it with
+  # supervision.  By default, the command will fail.
+  # However, the next two lines of code can be replaced
+  # with customized commands to obtain a reload for the daemon.
+  echo "forced reload is not a supported operation."
+  return 1
+}
+
+
 # ----------------------------------------------------------------------------
 # Process the requested start/stop/restart/status/force-reload command
 # ----------------------------------------------------------------------------
@@ -278,13 +290,9 @@ case "$1" in
     ;;
 
   force-reload)
-    # LSB 3.1 specifies this as a mandatory command, but
-    # there is no consistent method for enforcing it with
-    # supervision.  By default, the command will fail.
-    # However, the next two lines of code can be replaced
-    # with customized commands to obtain a reload for the daemon.
-    echo "forced reload is not a supported operation."
-    exit 1
+    force_reload_service
+    LASTRESULT=$?
+    exit $LASTRESULT
     ;;
 
   *)
