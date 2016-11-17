@@ -72,6 +72,7 @@ SVCNAME=$MYNAME
 [ $DEBUG -eq 1 ] && echo "PATH: $PATH"
 [ $DEBUG -eq 1 ] && echo "SVCDEF: $SVCDEF"
 [ $DEBUG -eq 1 ] && echo "SVCDIR: $SVCDIR"
+[ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
 [ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
 
 # Per-service override of the system-wide service check

@@ -21,6 +21,10 @@ SVCDIR=fail
 
 
 # ------------------------------------------------------------
+# This is where the service scan directory will reside.
+SVCSCAN=fail
+
+# ------------------------------------------------------------
 # This is the amount of time in seconds to wait for the service
 # scan to bring up the supervisor, before declaring a failure
 # the default value is 7 seconds
@@ -44,11 +48,13 @@ STARTWAIT=7
 # Debian 7 with asynchronous start (to mimic parallel rc)
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
+#SVCDIR=/etc/sv
 #SVCDIR=/etc/service
 #STARTWAIT=-1
 
 # Debian 7 with regular start (each service is checked)
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
-#SVCDIR=/etc/service
+#SVCDIR=/etc/sv
+#SVCSCAN=/etc/service
 #STARTWAIT=7
