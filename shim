@@ -106,13 +106,6 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 [ $DEBUG -eq 1 ] && echo "CMDSTART: $CMDSTART"
 
 
-# Pre-check that $LIVESVC exists, otherwise
-# any supervisor command is guaranteed to fail.
-if [ ! -d $LIVESVC ];
-then
-  echo "$MYNAME: WARNING: no live definition exists at $LIVESVC"
-fi
-
 
 # Process the request
 case "$1" in
