@@ -249,7 +249,7 @@ case "$1" in
   start)
     # Start the service, creating the service link if necessary.
     start_service
-    LASTERSULT=$?
+    LASTRESULT=$?
     exit $LASTRESULT
     ;;
 
