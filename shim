@@ -168,7 +168,7 @@ start_service()
         # NOTE: there is always a chance that the supervisor
         # will not be able to start the service, use this
         # setting with caution!
-        echo "$MYNAME: WARNING: asynchronous start via supervisor."
+        echo "$MYNAME: asynchronous start via supervisor."
         exit 0
         ;;
 
