@@ -264,7 +264,7 @@ case "$1" in
   restart)
     # Stop the service, removing the service link.
     # If the service is already stopped or missing a link,
-    # ignore it and proceed.
+    # ignore the result and proceed to the next step.
     stop_service
 
     # Start the service, creating the service link if necessary.
