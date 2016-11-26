@@ -64,6 +64,13 @@ SVCNAME=$MYNAME
 # includes PATH
 . $MYHOME/os-settings
 
+# Per-service override of the system-wide service check
+# wait time. This is the number of seconds to wait for
+# supervisor to report back. If set to -1, the start of
+# the service is left to the supervisor and is considered
+# an "asynchronous" start
+#STARTWAIT=7
+
 # detect if the settings were not changed.
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "PATH: $PATH"
@@ -75,13 +82,6 @@ SVCNAME=$MYNAME
 [ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
 [ "$SVCSCAN" = "fail" ] && echo "Failed to load service scan directory." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
-
-# Per-service override of the system-wide service check
-# wait time. This is the number of seconds to wait for
-# supervisor to report back. If set to -1, the start of
-# the service is left to the supervisor and is considered
-# an "asynchronous" start
-#STARTWAIT=7
 
 # Where is the (live) supervision directory for the daemon?
 LIVESVC=$SVCDIR/$SVCNAME
