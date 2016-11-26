@@ -66,14 +66,15 @@ SVCNAME=$MYNAME
 
 # detect if the settings were not changed.
 [ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
-[ "$SVCDEF" = "fail" ] && echo "Failed to load service directory definition setting." && exit 1
-[ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
-[ "$STARTWAIT" = "fail" ] && echo "Failed to load service start check wait." && exit 1
 [ $DEBUG -eq 1 ] && echo "PATH: $PATH"
+[ "$SVCDEF" = "fail" ] && echo "Failed to load service directory definition setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCDEF: $SVCDEF"
+[ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCDIR: $SVCDIR"
-[ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
+[ "$STARTWAIT" = "fail" ] && echo "Failed to load service start check wait." && exit 1
 [ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
+[ "$SVCSCAN" = "fail" ] && echo "Failed to load service scan directory." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
 
 # Per-service override of the system-wide service check
 # wait time. This is the number of seconds to wait for
@@ -97,12 +98,12 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 
 # detect if the settings were not changed.
 [ "$SVCCTRL" = "fail" ] && echo "Failed to load service control setting." && exit 1
-[ "$SVCSTATUS" = "fail" ] && echo "Failed to load service status setting." && exit 1
-[ "$CMDSTOP" = "fail" ] && echo "Failed to service stop setting." && exit 1
-[ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCCTRL: $SVCCTRL"
+[ "$SVCSTATUS" = "fail" ] && echo "Failed to load service status setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCSTATUS: $SVCSTATUS"
+[ "$CMDSTOP" = "fail" ] && echo "Failed to service stop setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "CMDSTOP: $CMDSTOP"
+[ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
 [ $DEBUG -eq 1 ] && echo "CMDSTART: $CMDSTART"
 
 
