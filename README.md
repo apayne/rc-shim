@@ -115,7 +115,7 @@ but this is not always successful because there is no requirement that
 the name of the rc script match the actual daemon name.  A common 
 example is the ISC bind service having the rc script named as "bind", 
 but the daemon is "named".  The shim has a provision for this, you can 
-simply edit that specific copy of the shim to have the correct name.  
+simply edit that specific copy of the shim to have the correct name. 
 Locate the line in the shim that looks like this: *SVCNAME=$MYNAME*.  
 Using our "bind/named" example, replace "$MYNAME" with "named".  This 
 skips the "guess" that the script takes and explicitly identifies the 
@@ -145,4 +145,4 @@ assurance you receive of a correct start in the same way that an
 asynchronous start would, i.e. you are assuming the supervisor will deal 
 with all of the issues and will not be able to directly see the results. 
 Also note that any status report you will receive will be for the 
-service scan and not the indivisual service.
+service scan and not the individual service.
