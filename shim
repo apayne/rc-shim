@@ -1,5 +1,6 @@
 #!/bin/sh
 
+### BEGIN RC-SHIM
 ### BEGIN INIT INFO
 # Provides:          shim
 # Required-Start:
@@ -9,7 +10,7 @@
 # Short-Description: Shim to launch a supervisor.
 # Description:       Shim to launch a supervisor.
 ### END INIT INFO
-
+### END RC-SHIM
 
 # The following variables are defined:
 
