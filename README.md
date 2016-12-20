@@ -116,10 +116,7 @@ the name of the rc script match the actual daemon name.  A common
 example is the ISC bind service having the rc script named as "bind", 
 but the daemon is "named".  The shim has a provision for this, you can 
 simply edit that specific copy of the shim to have the correct name.  
-Locate the line in the shim that looks like this:
-
-SVCNAME=$MYNAME
-
+Locate the line in the shim that looks like this: *SVCNAME=$MYNAME*.  
 Using our "bind/named" example, replace "$MYNAME" with "named".  This 
 skips the "guess" that the script takes and explicitly identifies the 
 name of the daemon itself.  Of course, the service definition directory 
