@@ -1,4 +1,4 @@
-# Intro #
+# Introduction #
 
 ---
 
@@ -8,11 +8,11 @@ supervision system.
 
 The script necessarily takes the place of the original script, typically 
 found in /etc/init.d, and essentially performs a translation of the 
-start/stop/restart commands into something the supervisor can use.
+start/stop/restart/status commands into something the supervisor can use.
 
 By utilizing an existing supervisor, and not leaving the daemon startup 
-to chance (or worse, not having a monitor that detects when it crashes 
-and the system still thinks it's up), two of the weaknesses of the rc 
+to chance, or not having a monitor that detects when it crashes 
+and the system still thinks it's up, two of the weaknesses of the rc 
 system can be avoided.
 
 
@@ -20,75 +20,125 @@ system can be avoided.
 
 ---
 
-There are two pre-requisites and two basic steps to installation: 
-installing a supervisor, installing service definitions, installing the 
-script and files, and changing the default settings.
+## Prerequisites #
 
-### Prerequisite 1 #
+1. You must have a supervision suite installed.  Currently, runit and s6 
+are supported, but nearly any daemontools-styled supervisor that 
+supports launching via service definition directories should work.
 
-You have a compatible supervisor installed.  Currently, runit and s6 are 
-supported but nearly any daemontools-styled supervisor should work as 
-well, including daemontools, daemontools-encore, etc.
+2. You must have a set of supervision definitions installed.  The 
+definitions must preside separately of both the directory containing the 
+symlinks, and the directory where the supervisor states are maintained.
 
-### Prerequisite 2 #
+## Installation Steps #
 
-You have service definitions available for each service that will 
-receive the shim.  The defintions will reside at a "service definition 
-directory", which acts as a read-only repository.  There are a few of 
-these available in various forms, but creating them is beyond the scope 
-of this document.  The best I can recommend is to write them yourself.
+1. Download the shim to a separate location.
 
-There are a few projects and collections out there if you search, and 
-you are impatient or desperate.
+2. Copy the os-settings and supervisor-settings files to where your 
+init.d scripts are located.  They must all be in the same directory.  
+Example:
 
+    sudo cp os-settings /etc/init.d/
+    sudo cp supervisor-settings /etc/init.d/
 
-### Step 1 #
+3. Adjust os-settings to match your installation.  If you do not change 
+the default settings, the shim will fail and refuse to run.  This is by 
+design.
 
-There are three necessary files.  Two files contain shell environment 
-variables that are required to run the shim, and then there is the shim 
-itself.
+4. Adjust supervisor-settings to match your supervisor's installation.  
+There are presets embedded in the file for runit and s6, which can be 
+used by uncommenting the appropriate entries.  If you do not change the 
+default settings, the shim will fail and refuse to run.  This is also by 
+design.
 
-All three files need to be located at the init.d directory location.  
-Typically this is at /etc/init.d for RedHat- and Debian-styled systems.  If
-this is not the case, please send all three files to the location where
-the actual rc control scripts live.
+5. At the moment, only manual installation is supported.  For each rc 
+script you wish to replace with a shim, rename the original, and create 
+a copy of the shim in its place.  Example:
 
-If you do not place the two settings file in the same location as the 
-shim, the shim will fail.
+    sudo mv /etc/init.d/snmpd /etc/init.d/snmpd.original
+    sudo cp shim /etc/init.d/snmpd
 
-### Step 2 #
+6. Test your results.
 
-Once installed, you will simply move the old script aside and copy the 
-shim, using the same script name.  For example, to use the shim
-with a service named "snmpd":
+    sudo service snmpd restart
 
-    cd /etc/init.d
-    mv snmpd snmpd.orig
-    cp shim snmpd
+## How this works #
 
 Because of the way the rc.d system works, the existing symlinks in each 
-runlevel will continue to point to the correct name, and because we have 
-replaced the script with the shim, any calls made during a runlevel 
-change will result in the shim running instead.
+runlevel will continue to point to the correct file in your rc script 
+directory, and because we have replaced the script with the shim, any 
+calls made during a runlevel change will result in the shim running 
+instead.
+
+This should be fully compatible with system startup, shutdown, and 
+runlevel changes.  The only change that takes place is that instead of 
+simply recording the PID file for later use and hoping for a successful 
+start, a full supervisor will be employed in the background.  As far as 
+the rest of the system is concerned, it's just another rc script 
+performing its function.
 
 
-# Limitations #
+## Troubleshooting #
 
----
+Here are some considerations to help you fix a problem or two:
 
-You must have a definition for each daemon that will receive the shim.  
-If there is no definition, then the shim will fail.
+0. *Do you have a way to access your system in the event that a shim 
+malfunctions?* Because the rc scripts are called at boot time and 
+shutdown, it is possible to really foul things up to the point you don't 
+have a working system you can access.  While I have tried to make the 
+shim as safe as I can, there are still circumstances beyond my control.  
+This includes things like having a malformed run script for ssh on a 
+remote system, and then discovering after reboot that the shim can't 
+start the service because the run script is wrong, completely locking 
+you out in the process and requiring a trip to the physical machine 
+itself.  This unpleasant situation can be avoided with testing. Test 
+each entry you change out by manually starting and stopping the service, 
+and then test it again.  Wait until you are 100% satisfied with the 
+results before changing out the rc script.  Or to put it in a shorter 
+way: *If in doubt, don't switch it out!*
 
-The script only supports three operations: stop, start, restart, and 
-status.  A common operation is to request a reload of settings.  This is 
-not supported at the moment.  While it may be possible to create a 
-"reload" command, there is no consistent use of the SIGHUP signal to 
-force a daemon to reload its settings, so there is no guarantee that 
-this command will be 100% consistent across all daemons.
+1. *Do you have a set of service definitions, active services, and a 
+service control directory?* The shim only provides an interface to the 
+existing service manager, not service definitions themselves.  You must 
+supply your own run scripts for the shim to have something to work with.
 
-Some rc scripts will attempt to load multiple daemons at the same time.  
-This is contrary to supervision, where typically there is one supervisor 
-for each daemon.  A work-around for this is to create a set of service 
-definitions that launch from a separate service scan, and to make the 
-shim launch it instead.  The shim will control the service scan program, 
-which in turn will bring the individual daemons up/down as needed.
+2. *Did you change all of the settings correctly?*  If you fail to change 
+either of the settings files, the scripts will immediately fail.  This 
+is by design and was meant to prevent the script from making an 
+assumption about the state of the system it was installed on by forcing 
+the systems administrator to specify it.
+
+3. *Is the rc script name different from the actual service name?*  The 
+script will attempt to guess the daemon's name using the name of itself, 
+but this is not always successful because there is no requirement that 
+the name of the rc script match the actual daemon name.  A common 
+example is ISC bind having the rc script as "bind" but the daemon is 
+"named".  The shim has a provision for this, you can simply edit that 
+specific copy of the shim to have the correct name.  In this instance, 
+you would edit the "bind" shim and change the daemon to be "named" 
+inside of it.
+
+4. *Does the rc script actually try to launch multiple daemons?* An 
+example would be Samba, which usually has two daemons launched together, 
+smnd and nmbd.  Many installations will provide a single rc script to 
+launch both at the same time, typically "smb" or "samba".  This is 
+contrary to how supervision works because a supervisor is usually 
+assigned to a specific daemon, and not a group of daemons.  There is a 
+work-around for this that requires a bit of work but will allow the shim 
+to continue to function, while fully integrating with the supervisor.  
+You will need to create a service definition that consists of a service 
+scan, and then place each daemon needed as a definition into that 
+service scan.  Then when you use the shim, you will launch the service 
+scan, not the individual daemons.  By using a nested service scan, the 
+emulation of a "multi daemon launch" is maintained, at the expense of 
+the increase in the size fo the supervision tree.  In this example, you 
+would create a "samba" definition to match the naming of the original rc 
+script, and the daemon launched is acutally another service scan.  That 
+service scan will then have in it the service definitons for smbd and 
+nmbd.  Whenever the service is brought up, the service scan will bring 
+up the other two with it.  Please note that this weakens the the 
+assurance you receive of a correct start in the same way that an 
+asynchronous start would, i.e. you are assuming the supervisor will deal 
+with all of the issues and will not be able to directly see the results.  
+Also note that any status report you will receive will be for the 
+service scan and not the indivisual service.
