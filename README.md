@@ -2,18 +2,19 @@
 
 ---
 
-The rc-shim script is meant to be used as a shim between an 
-existing SysV-styled rc script system, and a daemontools-alike 
-supervision system.
+The rc-shim script is meant to be used as a shim between an existing 
+SysV-styled rc script system, and a daemontools-alike supervision 
+system.
 
 The script necessarily takes the place of the original script, typically 
 found in /etc/init.d, and essentially performs a translation of the 
-start/stop/restart/status commands into something the supervisor can use.
+start/stop/restart/status commands into something the supervisor can 
+use.
 
 By utilizing an existing supervisor, and not leaving the daemon startup 
-to chance, or not having a monitor that detects when it crashes 
-and the system still thinks it's up, two of the weaknesses of the rc 
-system can be avoided.
+to chance, or not having a monitor that detects when it crashes and the 
+system still thinks it's up, two of the weaknesses of the rc system can 
+be avoided.
 
 
 # Installation #
@@ -108,15 +109,21 @@ is by design and was meant to prevent the script from making an
 assumption about the state of the system it was installed on by forcing 
 the systems administrator to specify it.
 
-3. *Is the rc script name different from the actual service name?*  The 
+3. *Is the rc script name different from the actual service name?* The 
 script will attempt to guess the daemon's name using the name of itself, 
 but this is not always successful because there is no requirement that 
 the name of the rc script match the actual daemon name.  A common 
-example is ISC bind having the rc script as "bind" but the daemon is 
-"named".  The shim has a provision for this, you can simply edit that 
-specific copy of the shim to have the correct name.  In this instance, 
-you would edit the "bind" shim and change the daemon to be "named" 
-inside of it.
+example is the ISC bind service having the rc script named as "bind", 
+but the daemon is "named".  The shim has a provision for this, you can 
+simply edit that specific copy of the shim to have the correct name.  
+Locate the line in the shim that looks like this:
+
+SVCNAME=$MYNAME
+
+Using our "bind/named" example, replace "$MYNAME" with "named".  This 
+skips the "guess" that the script takes and explicitly identifies the 
+name of the daemon itself.  Of course, the service definition directory 
+will have to have the same name for this to work correctly.
 
 4. *Does the rc script actually try to launch multiple daemons?* An 
 example would be Samba, which usually has two daemons launched together, 
@@ -125,7 +132,7 @@ launch both at the same time, typically "smb" or "samba".  This is
 contrary to how supervision works because a supervisor is usually 
 assigned to a specific daemon, and not a group of daemons.  There is a 
 work-around for this that requires a bit of work but will allow the shim 
-to continue to function, while fully integrating with the supervisor.  
+to continue to function, while fully integrating with the supervisor. 
 You will need to create a service definition that consists of a service 
 scan, and then place each daemon needed as a definition into that 
 service scan.  Then when you use the shim, you will launch the service 
@@ -139,6 +146,6 @@ nmbd.  Whenever the service is brought up, the service scan will bring
 up the other two with it.  Please note that this weakens the the 
 assurance you receive of a correct start in the same way that an 
 asynchronous start would, i.e. you are assuming the supervisor will deal 
-with all of the issues and will not be able to directly see the results.  
+with all of the issues and will not be able to directly see the results. 
 Also note that any status report you will receive will be for the 
 service scan and not the indivisual service.
