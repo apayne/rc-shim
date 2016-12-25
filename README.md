@@ -13,7 +13,7 @@ use.
 
 By utilizing an existing supervisor, and not leaving the daemon startup 
 to chance, or not having a monitor that detects when it crashes and the 
-system still thinks it's up, two of the weaknesses of the rc system can 
+system still thinks it is up, two of the weaknesses of the rc system can 
 be avoided.
 
 
