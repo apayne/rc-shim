@@ -7,13 +7,7 @@ CMDSTOP=fail
 CMDSTART=fail
 SVCSTATUS=fail
 
-# daemontools
-#SVCCTRL=svc
-#CMDSTOP=stop
-#CMDSTART=start
-#SVCSTATUS="svstat"
-
-# daemontools-encore
+# daemontools, daemontools-encore, possibly freedt as well
 #SVCCTRL=svc
 #CMDSTOP=stop
 #CMDSTART=start
