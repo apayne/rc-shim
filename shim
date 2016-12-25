@@ -62,7 +62,7 @@ SVCNAME=$MYNAME
 
 
 # load settings for distribution
-# includes PATH
+# includes PATH, SVCDEF, SVCDIR, STARTWAIT, SVCSCAN
 . $MYHOME/os-settings
 
 # Per-service override of the system-wide service check
@@ -94,7 +94,7 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 
 
 # load settings for the supervision environment
-# includes SVCCTRL, CMDSTART, CMDSTOP
+# includes SVCCTRL, SVCSTATUS, CMDSTART, CMDSTOP
 . $MYHOME/supervisor-settings
 
 # detect if the settings were not changed.
