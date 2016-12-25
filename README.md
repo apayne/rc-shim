@@ -11,10 +11,10 @@ found in /etc/init.d, and essentially performs a translation of the
 start/stop/restart/status commands into something the supervisor can 
 use.
 
-By utilizing an existing supervisor, and not leaving the daemon startup 
-to chance, or not having a monitor that detects when it crashes and the 
-system still thinks it is up, two of the weaknesses of the rc system can 
-be avoided.
+By utilizing an existing supervisor, and not leaving the daemon startup
+to chance, or not having a monitor that detects when the daemon crashes
+and the system still thinks it is up, two of the weaknesses of the rc
+system can be avoided.
 
 
 # Installation #
