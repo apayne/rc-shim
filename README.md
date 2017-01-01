@@ -73,7 +73,7 @@ symbolic links.  These links have special names that indicate what
 sequence they are called in, and if a service is to be stopped or 
 started.  The symlinks themselves point to the rc scripts, and the 
 entire system is simply calling each rc script with the corresponding 
-stop or start command.
+stop or start command using the corresponding symlink.
 
 The shim takes advantage of the fact that the links merely point to the 
 appropriate script.  It functions by replacing the rc script with 
@@ -81,10 +81,10 @@ something that is designed to talk to a supervision suite.  Instead of
 attempting to start or stop the service directly, the shim interprets 
 the "start" and "stop" commands and then sends signals to the supervisor 
 to take the appropriate action, as well as maintaining any symbolic 
-links in the scan directory.  The supervisor then handles the start/stop 
-command on behalf of the shim.  Because the existing symlinks in each 
-runlevel will continue to point to the shim, everything else - including 
-the use of the "service" command - functions normally.
+links in the supervisor's scan directory.  The supervisor then handles 
+the start/stop command on behalf of the shim.  Because the existing 
+symlinks in each runlevel will continue to point to the shim, everything 
+else - including the use of the "service" command - functions normally.
 
 This should be fully compatible with system startup, shutdown, and 
 runlevel changes.  The only change that takes place is that instead of 
