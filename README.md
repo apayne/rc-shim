@@ -4,17 +4,13 @@
 
 The rc-shim script is meant to be used as a shim between an existing 
 SysV-styled rc script system, and a daemontools-alike supervision 
-system.
+system.  By utilizing an existing supervisor, some of the weaknesses of 
+the SysV-styled rc system can be avoided.
 
-The script necessarily takes the place of the original script, typically 
-found in /etc/init.d, and essentially performs a translation of the 
-start/stop/restart/status commands into something the supervisor can 
-use.
+The script takes the place of the original script, typically found in 
+/etc/init.d, and performs a translation of the start/stop/restart/status 
+commands into something the supervisor can use.
 
-By utilizing an existing supervisor, and not leaving the daemon startup
-to chance, or not having a monitor that detects when the daemon crashes
-and the system still thinks it is up, two of the weaknesses of the rc
-system can be avoided.
 
 
 # Installation #
@@ -25,7 +21,9 @@ system can be avoided.
 
 1. You must have a supervision suite installed.  Currently, runit and s6 
 are supported, but nearly any daemontools-styled supervisor that 
-supports launching via service definition directories should work.
+supports launching via service definition directories should work.  
+Specifically, the supervision suite must support a service scan 
+directory.
 
 2. You must have a set of supervision definitions installed.  The 
 definitions must preside separately of both the directory containing the 
@@ -47,10 +45,9 @@ the default settings, the shim will fail and refuse to run.  This is by
 design.
 
 4. Adjust supervisor-settings to match your supervisor's installation.  
-There are presets embedded in the file for runit and s6, which can be 
-used by uncommenting the appropriate entries.  If you do not change the 
-default settings, the shim will fail and refuse to run.  This is also by 
-design.
+There are presets embedded in the file which can be used by uncommenting 
+the appropriate entries.  If you do not change the default settings, the 
+shim will fail and refuse to run.  This is also by design.
 
 5. At the moment, only manual installation is supported.  For each rc 
 script you wish to replace with a shim, rename the original, and create 
@@ -65,18 +62,36 @@ a copy of the shim in its place.  Example:
 
 ## How this works #
 
-Because of the way the rc.d system works, the existing symlinks in each 
-runlevel will continue to point to the correct file in your rc script 
-directory, and because we have replaced the script with the shim, any 
-calls made during a runlevel change will result in the shim running 
-instead.
+The basic idea behind "System-V styled" rc scripts is that a set of 
+shell scripts will stop or start various services as needed.  The 
+scripts are stored in a specific directory (on Linux systems, typically 
+/etc/init.d) and each script will stop or start a service as needed.
+
+When your system boots up, shuts down, or changes run levels, there is 
+special directory corresponding to the runlevel, that contains a set of 
+symbolic links.  These links have special names that indicate what 
+sequence they are called in, and if a service is to be stopped or 
+started.  The symlinks themselves point to the rc scripts, and the 
+entire system is simply calling each rc script with the corresponding 
+stop or start command.
+
+The shim takes advantage of the fact that the links merely point to the 
+appropriate script.  It functions by replacing the rc script with 
+something that is designed to talk to a supervision suite.  Instead of 
+attempting to start or stop the service directly, the shim interprets 
+the "start" and "stop" commands and then sends signals to the supervisor 
+to take the appropriate action, as well as maintaining any symbolic 
+links in the scan directory.  The supervisor then handles the start/stop 
+command on behalf of the shim.  Because the existing symlinks in each 
+runlevel will continue to point to the shim, everything else - including 
+the use of the "service" command - functions normally.
 
 This should be fully compatible with system startup, shutdown, and 
 runlevel changes.  The only change that takes place is that instead of 
 simply recording the PID file for later use and hoping for a successful 
-start, a full supervisor will be employed in the background.  As far as 
-the rest of the system is concerned, it's just another rc script 
-performing its function.
+start, a full supervisor will be employed, along with whatever 
+advantages it conveys.  As far as the rest of the system is concerned, 
+the shim is just another rc script.
 
 
 ## Troubleshooting #
