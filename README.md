@@ -5,7 +5,7 @@
 The rc-shim script is meant to be used as a shim between an existing 
 SysV-styled rc script system, and a daemontools-alike supervision 
 system.  By utilizing an existing supervisor, some of the weaknesses of 
-the SysV-styled rc system can be avoided.
+the rc system can be avoided.
 
 The script takes the place of the original script, typically found in 
 /etc/init.d, and performs a translation of the start/stop/restart/status 
@@ -28,6 +28,11 @@ directory.
 2. You must have a set of supervision definitions installed.  The 
 definitions must preside separately of both the directory containing the 
 symlinks, and the directory where the supervisor states are maintained.
+
+3. You will only be able to use the shim with rc scripts that launch a 
+single daemon.  Scripts that launch multiple daemons (on Linux, 
+typically Samba or the bluetooth stack, for example) will require 
+additional setup to be used properly.
 
 ## Installation Steps #
 
@@ -140,24 +145,24 @@ will have to have the same name for this to work correctly.
 4. *Does the rc script actually try to launch multiple daemons?* An 
 example would be Samba, which usually has two daemons launched together, 
 smnd and nmbd.  Many installations will provide a single rc script to 
-launch both at the same time, typically "smb" or "samba".  This is 
+launch both at the same time, typically named "smb" or "samba".  This is 
 contrary to how supervision works because a supervisor is usually 
 assigned to a specific daemon, and not a group of daemons.  There is a 
 work-around for this that requires a bit of work but will allow the shim 
 to continue to function, while fully integrating with the supervisor. 
 You will need to create a service definition that consists of a service 
-scan, and then place each daemon needed as a definition into that 
-service scan.  Then when you use the shim, you will launch the service 
-scan, not the individual daemons.  By using a nested service scan, the 
-emulation of a "multi daemon launch" is maintained, at the expense of 
-the increase in the size fo the supervision tree.  In this example, you 
-would create a "samba" definition to match the naming of the original rc 
-script, and the daemon launched is acutally another service scan.  That 
-service scan will then have in it the service definitons for smbd and 
-nmbd.  Whenever the service is brought up, the service scan will bring 
-up the other two with it.  Please note that this weakens the the 
-assurance you receive of a correct start in the same way that an 
-asynchronous start would, i.e. you are assuming the supervisor will deal 
-with all of the issues and will not be able to directly see the results. 
-Also note that any status report you will receive will be for the 
-service scan and not the individual service.
+scan, and then place each daemon needed as a definition into the new 
+service scan directory.  Then when you use the shim, you will launch the 
+service scan, not the individual daemons.  By using a nested service 
+scan, the emulation of a "multi daemon launch" is maintained, at the 
+expense of the increase in the size fo the supervision tree.  In this 
+example, you would create a "samba" definition to match the naming of 
+the original rc script, and the daemon launched is acutally another 
+service scan.  That service scan will then have in it the service 
+definitons for smbd and nmbd.  Whenever the service is brought up, the 
+service scan will bring up the other two with it.  Please note that this 
+weakens the the assurance you receive of a correct start in the same way 
+that an asynchronous start would, i.e. you are assuming the supervisor 
+will deal with all of the issues and will not be able to directly see 
+the results. Also note that any status report you will receive will be 
+for the service scan and not the individual service.
