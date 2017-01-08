@@ -127,16 +127,15 @@ Here are some considerations to help you fix a problem or two:
 malfunctions?* Because the rc scripts are called at boot time and 
 shutdown, it is possible to really foul things up to the point you don't 
 have a working system you can access.  While I have tried to make the 
-shim as safe as I can, there are still circumstances beyond my control.  
+shim as safe as I can, there are still circumstances beyond my control. 
 This includes things like having a malformed run script for ssh on a 
 remote system, and then discovering after reboot that the shim can't 
 start the service because the run script is wrong, completely locking 
 you out in the process and requiring a trip to the physical machine 
 itself.  This unpleasant situation can be avoided with testing. Test 
-each entry you change out by manually starting and stopping the service, 
-and then test it again.  Wait until you are 100% satisfied with the 
-results before changing out the rc script.  Or to put it in a shorter 
-way: *If in doubt, don't switch it out!*
+each entry you change out, and then test it again.  Wait until you are 
+100% satisfied with the results before changing out the rc script.  Or 
+to put it in a shorter way: *If in doubt, don't switch it out!*
 
 1. *Do you have a set of service definitions, active services, and a 
 service control directory?* The shim only provides an interface to the 
@@ -147,9 +146,13 @@ supply your own run scripts for the shim to have something to work with.
 either of the settings files, the scripts will immediately fail.  This 
 is by design and was meant to prevent the script from making an 
 assumption about the state of the system it was installed on by forcing 
-the systems administrator to specify it.
+the system administrator to specify it.
 
-3. *Is the rc script name different from the actual service name?* The 
+3. *Are you using a supported shell?* You can adjust the shim to run 
+with any shell that is supported.  Using a shell that isn't tested can 
+(and usually will) result in the shim failing.
+
+4. *Is the rc script name different from the actual service name?* The 
 script will attempt to guess the daemon's name using the name of itself, 
 but this is not always successful because there is no requirement that 
 the name of the rc script match the actual daemon name.  A common 
@@ -162,7 +165,7 @@ skips the "guess" that the script takes and explicitly identifies the
 name of the daemon itself.  Of course, the service definition directory 
 will have to have the same name for this to work correctly.
 
-4. *Does the rc script actually try to launch multiple daemons?* An 
+5. *Does the rc script actually try to launch multiple daemons?* An 
 example would be Samba, which usually has two daemons launched together, 
 smnd and nmbd.  Many installations will provide a single rc script to 
 launch both at the same time, typically named "smb" or "samba".  This is 
