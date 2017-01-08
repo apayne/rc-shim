@@ -78,35 +78,45 @@ test on a live or "production" service that is receiving active use.
 ## How this works #
 
 The basic idea behind "System-V styled" rc scripts is that a set of 
-shell scripts will stop or start various services as needed.  The 
-scripts are stored in a specific directory (on Linux systems, typically 
-/etc/init.d) and each script will stop or start a service as needed.
+shell scripts will stop or start service(s) as needed.  The scripts are 
+stored in a specific directory (on Linux systems, typically /etc/init.d) 
+and each script will stop or start a specific service.  Note that a 
+service can be a single daemon, multiple daemons, or even no daemon at 
+all, such as when firewall rules are loaded; in that case, only a change 
+of the system state occurs.
 
-When your system boots up, shuts down, or changes run levels, there is 
-special directory corresponding to the runlevel, that contains a set of 
-symbolic links.  These links have special names that indicate what 
-sequence they are called in, and if a service is to be stopped or 
-started.  The symlinks themselves point to the rc scripts, and the 
-entire system is simply calling each rc script with the corresponding 
-stop or start command using the corresponding symlink.
+When your system start up, shuts down, or changes "run levels", it is 
+actually calling specific scripts in a specific sequence.  It does this 
+by using a special directory corresponding to the runlevel which 
+contains a set of symbolic links.  The links point back to these scripts 
+and have special names that tell the rc system if it is starting or 
+stopping a service.  The entire rc system is simply calling each rc 
+script in a specific sequence, using those special symlinks with the 
+corresponding stop or start command.
 
 The shim takes advantage of the fact that the links merely point to the 
-appropriate script.  It functions by replacing the rc script with 
-something that is designed to talk to a supervision suite.  Instead of 
+appropriate script, and that the rc system calls the script by name.  It 
+functions by replacing the original rc script with something that is 
+designed to talk to a supervision suite.  Instead of the rc script 
 attempting to start or stop the service directly, the shim interprets 
-the "start" and "stop" commands and then sends signals to the supervisor 
-to take the appropriate action, as well as maintaining any symbolic 
-links in the supervisor's scan directory.  The supervisor then handles 
-the start/stop command on behalf of the shim.  Because the existing 
-symlinks in each runlevel will continue to point to the shim, everything 
-else - including the use of the "service" command - functions normally.
+the "start" and "stop" commands and then sends commands to the 
+supervisor to take the appropriate action, as well as maintaining any 
+symbolic links in the supervisor's scan directory.  The supervisor then 
+handles the start/stop command on behalf of the shim.  Because the 
+existing symlinks in each runlevel will continue to point to the shim, 
+everything else - including the use of the "service" command - continues 
+to work as expected.  This arrangement remains compatible with system 
+startup, shutdown, and runlevel changes.  As far as the rest of the 
+system is concerned, the shim is just another rc script, and behaves as 
+such.
 
-This should be fully compatible with system startup, shutdown, and 
-runlevel changes.  The only change that takes place is that instead of 
-simply recording the PID file for later use and hoping for a successful 
-start, a full supervisor will be employed, along with whatever 
-advantages it conveys.  As far as the rest of the system is concerned, 
-the shim is just another rc script.
+There is one caveat.  Because there is no universal way to signal a 
+daemon to reload its settings, as a result, the "force-reload" command 
+is only a code stub in the shim that emits a warning and fails with a 
+value of 1.  However, the shim does have a function stub for the 
+"force-reload" command that allows you to implement this feature, if you 
+desire it.  You simply place the daemon-specific command or signalling 
+in the stub and it should function as anticipated.
 
 
 ## Troubleshooting #
