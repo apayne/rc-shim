@@ -34,8 +34,8 @@ single daemon.  Scripts that launch multiple daemons (on Linux,
 typically Samba or the bluetooth stack, for example) will require 
 additional setup to be used properly.
 
-4. A compatible shell.  Currently, ash, bash, dash, ksh, mksh, posh, and 
-busybox sh are all known to work.
+4. A compatible shell.  Currently `ash`, `bash`, `dash`, `ksh`, `mksh`, 
+`posh`, and busybox `sh` are all known to work.
 
 ## Installation Steps #
 
@@ -46,8 +46,10 @@ that location.
 init.d scripts are located.  They must all be in the same directory.  
 Example:
 
-    sudo cp os-settings /etc/init.d/
-    sudo cp supervisor-settings /etc/init.d/
+```
+sudo cp os-settings /etc/init.d/
+sudo cp supervisor-settings /etc/init.d/
+```
 
 3. Adjust os-settings to match your installation.  If you do not change 
 the default settings, the shim will fail and refuse to run.  This is by 
@@ -62,8 +64,10 @@ shim will fail and refuse to run.  This is also by design.
 script you wish to replace with a shim, rename the original, and create 
 a copy of the shim in its place.  Here is an example using snmpd:
 
-    sudo mv /etc/init.d/snmpd /etc/init.d/snmpd.original
-    sudo cp shim /etc/init.d/snmpd
+```
+sudo mv /etc/init.d/snmpd /etc/init.d/snmpd.original
+sudo cp shim /etc/init.d/snmpd
+```
 
 6. By default, the shim will call /bin/sh as the shell to be used.  If 
 you wish to use another supported shell, you will want to change the 
@@ -73,7 +77,10 @@ first line of the shim to the shell you desire.
 to be stopped and started repeatedly; you do NOT want to perform the 
 test on a live or "production" service that is receiving active use.
 
-    sudo ./shim-test snmpd
+```
+sudo ./shim-test snmpd
+```
+
 
 ## How this works #
 
