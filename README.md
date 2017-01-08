@@ -21,8 +21,8 @@ commands into something the supervisor can use.
 
 1. You must have a supervision suite installed.  Currently, runit and s6 
 are supported, but nearly any daemontools-styled supervisor that 
-supports launching via service definition directories should work.  
-Specifically, the supervision suite must support a service scan 
+supports launching via service definition directories should 
+work.  Specifically, the supervision suite must support a service scan 
 directory.
 
 2. You must have a set of supervision definitions installed.  The 
