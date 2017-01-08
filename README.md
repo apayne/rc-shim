@@ -34,6 +34,9 @@ single daemon.  Scripts that launch multiple daemons (on Linux,
 typically Samba or the bluetooth stack, for example) will require 
 additional setup to be used properly.
 
+4. A compatible shell.  Currently, ash, bash, dash, ksh, mksh, posh, and 
+busybox sh are all known to work.
+
 ## Installation Steps #
 
 1. Download the shim to a separate location.
