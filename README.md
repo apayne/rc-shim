@@ -39,7 +39,8 @@ busybox sh are all known to work.
 
 ## Installation Steps #
 
-1. Download the shim to a separate location.
+1. Download the shim to a separate location, then change directory to
+that location.
 
 2. Copy the os-settings and supervisor-settings files to where your 
 init.d scripts are located.  They must all be in the same directory.  
@@ -59,14 +60,20 @@ shim will fail and refuse to run.  This is also by design.
 
 5. At the moment, only manual installation is supported.  For each rc 
 script you wish to replace with a shim, rename the original, and create 
-a copy of the shim in its place.  Example:
+a copy of the shim in its place.  Here is an example using snmpd:
 
     sudo mv /etc/init.d/snmpd /etc/init.d/snmpd.original
     sudo cp shim /etc/init.d/snmpd
 
-6. Test your results.
+6. By default, the shim will call /bin/sh as the shell to be used.  If 
+you wish to use another supported shell, you will want to change the 
+first line of the shim to the shell you desire.
 
-    sudo service snmpd restart
+7. Test your results.  Please note that the test WILL cause the service 
+to be stopped and started repeatedly; you do NOT want to perform the 
+test on a live or "production" service that is receiving active use.
+
+    sudo ./shim-test snmpd
 
 ## How this works #
 
