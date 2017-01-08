@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# a simple test harness to test an installed service
+# Invocation is as follows:
+# sudo ./test <servicename>
+
+runtest()
+{
+echo -n "Attempting $1 on $2: "
+service $2 $1 1>/dev/null
+if [ $? -eq 0 ];
+then
+  echo "PASS."
+  # note: we use 7 seconds because that is the maximum
+  # time alotted to bring a service down.
+  sleep 7
+else
+  echo "FAILED."
+  exit 2
+fi
+}
+
+# were we called with no paramter?
+if [ -z $1 ];
+then
+  echo "USAGE: sudo $0 <name-of-script>"
+  exit 1
+fi
+
+
+# obtain the service status.
+runtest "status" $1
+
+# stop the service.
+runtest "stop" $1
+
+# start the service
+runtest "start" $1
+
+# restart the service while already started
+runtest "restart" $1
+
+# stop, then restart the service (should start normally)
+runtest "stop" $1
+runtest "restart" $1
+
+# if we make it this far without aborting, it passed.
+echo "All tests passed."
+exit 0
