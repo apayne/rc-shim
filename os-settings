@@ -49,7 +49,7 @@ STARTWAIT=7
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
 #SVCDIR=/etc/sv
-#SVCDIR=/etc/service
+#SVCSCAN=/etc/service
 #STARTWAIT=-1
 
 # Debian 7 with regular start (each service is checked)
