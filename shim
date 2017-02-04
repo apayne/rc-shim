@@ -60,10 +60,15 @@ SVCNAME=$MYNAME
 #SVCNAME="unknown"
 
 
-
 # load settings for distribution
 # includes PATH, SVCDEF, SVCDIR, STARTWAIT, SVCSCAN
-. $MYHOME/os-settings
+if [ -e $MYHOME/os-settings ];
+then
+  . $MYHOME/os-settings
+else
+  echo "$0: ERROR: file $MYHOME/os-settings not found, aborting."
+  exit 1
+fi
 
 # Per-service override of the system-wide service check
 # wait time. This is the number of seconds to wait for
@@ -73,15 +78,15 @@ SVCNAME=$MYNAME
 #STARTWAIT=7
 
 # detect if the settings were not changed.
-[ "$PATH" = "fail" ] && echo "Failed to load PATH setting." && exit 1
+[ "$PATH" = "fail" ] && echo "ERROR: PATH value is $PATH, please edit $MYHOME/os-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "PATH: $PATH"
-[ "$SVCDEF" = "fail" ] && echo "Failed to load service directory definition setting." && exit 1
+[ "$SVCDEF" = "fail" ] && echo "ERROR: SVCDEF value is $SVCDEF, please edit $MYHOME/os-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCDEF: $SVCDEF"
-[ "$SVCDIR" = "fail" ] && echo "Failed to load service directory location setting." && exit 1
+[ "$SVCDIR" = "fail" ] && echo "ERROR: SVCDIR value is $SVCDIR, please edit $MYHOME/os-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCDIR: $SVCDIR"
-[ "$STARTWAIT" = "fail" ] && echo "Failed to load service start check wait." && exit 1
+[ "$STARTWAIT" = "fail" ] && echo "ERROR: STARTWAIT value is $STARTWAIT, please edit $MYHOME/os-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
-[ "$SVCSCAN" = "fail" ] && echo "Failed to load service scan directory." && exit 1
+[ "$SVCSCAN" = "fail" ] && echo "ERROR: SVCSCAN value is $SVCSCAN, please edit $MYHOME/os-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
 
 # Where is the (live) supervision directory for the daemon?
@@ -95,16 +100,22 @@ SVCDEFNAME=$SVCDEF/$SVCNAME
 
 # load settings for the supervision environment
 # includes SVCCTRL, SVCSTATUS, CMDSTART, CMDSTOP
-. $MYHOME/supervisor-settings
+if [ -e $MYHOME/supervisor-settings ];
+then
+  . $MYHOME/supervisor-settings
+else
+  echo "$0: ERROR: file $MYHOME/supervisor-settings not found, aborting."
+  exit 1
+fi
 
 # detect if the settings were not changed.
-[ "$SVCCTRL" = "fail" ] && echo "Failed to load service control setting." && exit 1
+[ "$SVCCTRL" = "fail" ] && echo "ERROR: SVCCTRL value is $SVCCTRL, please edit $MYHOME/supervisor-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCCTRL: $SVCCTRL"
-[ "$SVCSTATUS" = "fail" ] && echo "Failed to load service status setting." && exit 1
+[ "$SVCSTATUS" = "fail" ] && echo "ERROR: SVCSTATUS value is $SVCSTATUS, please edit $MYHOME/supervisor-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "SVCSTATUS: $SVCSTATUS"
-[ "$CMDSTOP" = "fail" ] && echo "Failed to service stop setting." && exit 1
+[ "$CMDSTOP" = "fail" ] && echo "ERROR: CMDSTOP value is $CMDSTOP, please edit $MYHOME/supervisor-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "CMDSTOP: $CMDSTOP"
-[ "$CMDSTART" = "fail" ] && echo "Failed to load service start setting." && exit 1
+[ "$CMDSTART" = "fail" ] && echo "ERROR: $CMDSTART value is $CMDSTART, please edit $MYHOME/supervisor-settings." && exit 1
 [ $DEBUG -eq 1 ] && echo "CMDSTART: $CMDSTART"
 
 
