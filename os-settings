@@ -27,34 +27,41 @@ SVCSCAN=fail
 # ------------------------------------------------------------
 # This is the amount of time in seconds to wait for the service
 # scan to bring up the supervisor, before declaring a failure
-# the default value is 7 seconds
-STARTWAIT=7
+# the default value is the longest time a supervisor will
+# wait, plus one second.  Runit uses 7 seconds, so the
+# default is 7+1.
+STARTWAIT=8
 
 
 # ------------------------------------------------------------
-# If you are not as concerned about the result of the start,
-# or need to have the service start process faster, you can
-# use an asynchronous start, which skips the service check and 
-# leaves it to the supervisor to handle the startup.
-# This can be overriden in each individual shim.
+# If you are not as concerned about the result of the 
+# start, or need to have the service start process 
+# faster, you can use an asynchronous start, which skips 
+# the service check and leaves it to the supervisor to 
+# handle the startup. This can be overriden in each 
+# individual shim. Comment out the STARTWAIT entry above, 
+# and uncomment the STARTWAIT entry below to enable 
+# system-wide asynchronous start.
 # ------------------------------------------------------------
-# Comment out the entry above, and uncomment the entry below
-# to enable system-wide asynchronous start.  This is NOT recommended.
+# WARNING: This is NOT recommended.  By changing this setting
+# you are not ensuring that the service will be available at
+# boot time.  USE AT YOUR OWN RISK.
+# ------------------------------------------------------------
 #STARTWAIT=-1
 
 
 # Sample configurations are provided.  Feel free to add your own.
 
-# Debian 7 with asynchronous start (to mimic parallel rc)
+# Debian 7/8/9 using SysV with asynchronous start (to mimic parallel rc)
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
 #SVCDIR=/etc/sv
 #SVCSCAN=/etc/service
 #STARTWAIT=-1
 
-# Debian 7 with regular start (each service is checked)
+# Debian 7/8/9 using SysV with regular start (each service is checked)
 #PATH=/sbin:/bin:/usr/sbin:/usr/bin
 #SVCDEF=/etc/svcdef
 #SVCDIR=/etc/sv
 #SVCSCAN=/etc/service
-#STARTWAIT=7
+#STARTWAIT=8

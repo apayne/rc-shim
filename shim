@@ -75,7 +75,7 @@ fi
 # supervisor to report back. If set to -1, the start of
 # the service is left to the supervisor and is considered
 # an "asynchronous" start
-#STARTWAIT=7
+#STARTWAIT=8
 
 # detect if the settings were not changed.
 [ "$PATH" = "fail" ] && echo "ERROR: PATH value is $PATH, please edit $MYHOME/os-settings." && exit 1
