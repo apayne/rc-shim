@@ -47,6 +47,7 @@ init.d scripts are located.  They must all be in the same directory.
 Example:
 
     >sudo cp os-settings /etc/init.d/
+
     >sudo cp supervisor-settings /etc/init.d/
 
 3. Adjust os-settings to match your installation.  If you do not change 
@@ -62,8 +63,9 @@ shim will fail and refuse to run.  This is also by design.
 script you wish to replace with a shim, rename the original, and create 
 a copy of the shim in its place.  Here is an example using snmpd:
 
-    >sudo mv /etc/init.d/snmpd /etc/init.d/snmpd.original
-    >sudo cp shim /etc/init.d/snmpd
+    >sudo mkdir -p /etc/init.d/ARCHIVE ; mv /etc/init.d/snmpd /etc/init.d/ARCHIVE/snmpd.original
+
+    >sudo cp shim-plain /etc/init.d/snmpd
 
 6. By default, the shim will call /bin/sh as the shell to be used.  If 
 you wish to use another supported shell, you will want to change the 
@@ -74,6 +76,12 @@ to be stopped and started repeatedly; you do NOT want to perform the
 test on a live or "production" service that is receiving active use.
 
     >sudo ./shim-test snmpd
+
+If you want to have "fancy printing" instead of the standard output of 
+the supervisor commands, you can substitute shim-fancy wherever you see 
+shim-plain.  NOTE: this is currently an experimental option.  The 
+functionality remains the same, but the output may be munged as a 
+result of the processing performed.  You use it at your own risk.
 
 
 ## How this works #

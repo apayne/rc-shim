@@ -1,0 +1,388 @@
+#!/bin/sh
+
+### BEGIN RC-SHIM
+### BEGIN INIT INFO
+# Provides:          homeassistant
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Smart home service
+# Description:       Provides the smart home service 'home assistant'
+### END INIT INFO
+### END RC-SHIM
+
+# The following variables are defined:
+
+# In this script:
+# MYHOME      the detected location of init.d scripts
+# MYNAME      the name of this script as called
+# SVCNAME     the name of the service
+# SVCDEFNAME  the path name of the service definition
+# LIVESVC    the path name of the live service
+# LASTRESULT  the return code of the last command
+# STARTWAIT   the number of seconds to wait for successful start
+
+# In os-settings:
+# PATH      the file path to be searched by this script
+# SVCDEF    the location of all service definitions
+# SVCDIR    the location of all active services
+# STARTWAIT the amount of time to wait on service start checks
+
+# In supervisor-settings:
+# SVCCTRL   the command used to control the supervisor
+# SVCSTATUS the command to return the status of the supervised daemon
+# CMDSTART  the command to be issued to the supervisor for staring the daemon
+# CMDSTOP   the command to be issued to the supervisor for stopping the daemon
+
+# Change DEBUG to 1 instead of 0 to display values at runtime.
+DEBUG=0
+[ $DEBUG -eq 1 ] && echo "DEBUG mode is on."
+
+# Define the result scratchpad
+LASTRESULT=0
+
+# Where do I live? (i.e. where is my init.d collection)
+MYHOME=$( dirname $0 )
+[ $DEBUG -eq 1 ] && echo "MYHOME: $MYHOME"
+
+# What is my (script) name?
+MYNAME=$( basename $0 )
+[ $DEBUG -eq 1 ] && echo "MYNAME: $MYNAME"
+
+# What is my (daemon) name?
+SVCNAME=$MYNAME
+[ $DEBUG -eq 1 ] && echo "SVCNAME: $SVCNAME"
+
+# By default, the service definition name is the same as $MYNAME, but in
+# some cases you may wish to have a different service definition.  When
+# that happens, simply uncomment and change the line below.
+#SVCNAME="unknown"
+
+
+# load settings for distribution
+# includes PATH, SVCDEF, SVCDIR, STARTWAIT, SVCSCAN
+if [ -e $MYHOME/os-settings ];
+then
+  . $MYHOME/os-settings
+else
+  echo "$0: ERROR: file $MYHOME/os-settings not found, aborting."
+  exit 1
+fi
+
+# Per-service override of the system-wide service check
+# wait time. This is the number of seconds to wait for
+# supervisor to report back. If set to -1, the start of
+# the service is left to the supervisor and is considered
+# an "asynchronous" start
+#STARTWAIT=-1
+
+# detect if the settings were not changed.
+[ "$PATH" = "fail" ] && echo "ERROR: PATH value is $PATH, please edit $MYHOME/os-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "PATH: $PATH"
+[ "$SVCDEF" = "fail" ] && echo "ERROR: SVCDEF value is $SVCDEF, please edit $MYHOME/os-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCDEF: $SVCDEF"
+[ "$SVCDIR" = "fail" ] && echo "ERROR: SVCDIR value is $SVCDIR, please edit $MYHOME/os-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCDIR: $SVCDIR"
+[ "$STARTWAIT" = "fail" ] && echo "ERROR: STARTWAIT value is $STARTWAIT, please edit $MYHOME/os-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "STARTWAIT: $STARTWAIT"
+[ "$SVCSCAN" = "fail" ] && echo "ERROR: SVCSCAN value is $SVCSCAN, please edit $MYHOME/os-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCSCAN: $SVCSCAN"
+
+# Where is the (live) supervision directory for the daemon?
+LIVESVC=$SVCDIR/$SVCNAME
+[ $DEBUG -eq 1 ] && echo "LIVESVC: $LIVESVC"
+
+# What service definition should I use to control the daemon?
+SVCDEFNAME=$SVCDEF/$SVCNAME
+[ $DEBUG -eq 1 ] && echo "SVCDEFNAME: $SVCDEFNAME"
+
+
+# load settings for the supervision environment
+# includes SVCCTRL, SVCSTATUS, CMDSTART, CMDSTOP
+if [ -e $MYHOME/supervisor-settings ];
+then
+  . $MYHOME/supervisor-settings
+else
+  echo "$0: ERROR: file $MYHOME/supervisor-settings not found, aborting."
+  exit 1
+fi
+
+# detect if the settings were not changed.
+[ "$SVCCTRL" = "fail" ] && echo "ERROR: SVCCTRL value is $SVCCTRL, please edit $MYHOME/supervisor-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCCTRL: $SVCCTRL"
+[ "$SVCSTATUS" = "fail" ] && echo "ERROR: SVCSTATUS value is $SVCSTATUS, please edit $MYHOME/supervisor-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "SVCSTATUS: $SVCSTATUS"
+[ "$CMDSTOP" = "fail" ] && echo "ERROR: CMDSTOP value is $CMDSTOP, please edit $MYHOME/supervisor-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "CMDSTOP: $CMDSTOP"
+[ "$CMDSTART" = "fail" ] && echo "ERROR: $CMDSTART value is $CMDSTART, please edit $MYHOME/supervisor-settings." && exit 1
+[ $DEBUG -eq 1 ] && echo "CMDSTART: $CMDSTART"
+
+
+
+# ----------------------------------------------------------------------------
+# native LSB output (where supported)
+#
+# example LSB calls (from Debian 8):
+#
+#     log_daemon_msg "Starting remote file system services"
+#     log_progress_msg "nfsd"; start-stop-daemon --start --quiet nfsd
+#     log_progress_msg "mountd"; start-stop-daemon --start --quiet mountd
+#     log_progress_msg "ugidd"; start-stop-daemon --start --quiet ugidd
+#     log_end_msg 0
+#
+# ----------------------------------------------------------------------------
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+SUPPORTS_LSB=0
+if [ -f /lib/lsb/init-functions ];
+then
+  SUPPORTS_LSB=1
+  [ $DEBUG -eq 1 ] && echo "LSB Support Detected."
+  . /lib/lsb/init-functions
+fi
+
+begin_shim_out()
+{
+if [ $SUPPORTS_LSB -eq 1 ];
+then
+  log_begin_msg "$1"
+#  log_daemon_msg "$SVCNAME"
+fi
+}
+
+shim_out()
+{
+if [ $SUPPORTS_LSB -eq 1 ];
+then
+  # use LSB hooks to send output
+  log_progress_msg "$1"
+else
+  # LSB not available, just send raw output
+  echo "$1"
+fi
+}
+
+end_shim_out()
+{
+if [ $SUPPORTS_LSB -eq 1 ];
+then
+  log_end_msg "$1"
+fi
+}
+
+
+
+# ----------------------------------------------------------------------------
+# Internal defintions are moved here to make it
+# easier to issue a restart command by re-using
+# existing start/stop code.
+# ----------------------------------------------------------------------------
+
+
+
+
+start_service()
+{
+  # A service definition needs to exist.
+  if [ ! -d $SVCDEF/$SVCNAME ];
+  then
+    shim_out "$MYNAME: cannot start service without a definition.  Aborting."
+    exit 1
+  else
+    [ $DEBUG -eq 1 ] && shim_out "Service definition found at $SVCDEF/$SVCNAME."
+  fi
+
+  # A live instance of the service definition needs to exist.
+  if [ ! -d $LIVESVC ];
+  then
+    shim_out "$MYNAME: cannot start service without a live instance.  Aborting."
+    exit 1
+  else
+    [ $DEBUG -eq 1 ] && shim_out "Service live instance found at $LIVESVC."
+  fi
+
+  # A service scan link of the live instance needs to exist.
+  if [ -L $SVCSCAN/$SVCNAME ];
+  then
+    [ $DEBUG -eq 1 ] && shim_out "$MYNAME: WARNING: service scan link already exists."
+  else
+    ln -s $LIVESVC $SVCSCAN/$SVCNAME
+    LASTRESULT=$?
+    [ $DEBUG -eq 1 ] && shim_out "$MYNAME: service scan link created."
+  fi
+
+  # After a successful link, start the daemon.
+  if [ $LASTRESULT -eq 0 ];
+  then
+    # wait for a confirmation that a supervisor is running for the service
+    # NOTE: runit provides feedback that requires we send output to /dev/null
+    $SVCSTATUS $SVCNAME >/dev/null
+    LASTRESULT=$?
+    until [ $STARTWAIT -lt 1 -o $LASTRESULT -eq 0 ];
+    do
+      sleep 1 # pause before checking again
+      $SVCSTATUS $SVCNAME >/dev/null
+      LASTRESULT=$?
+      STARTWAIT=`expr $STARTWAIT - 1`
+    done
+
+    # tell the supervisor to start the service
+    case "$STARTWAIT" in
+
+      -1)
+        # "asynchronous" start, leave it to the supervisor
+        # to handle the launch and return success immediately.
+        # NOTE: there is always a chance that the supervisor
+        # will not be able to start the service, use this
+        # setting with caution!
+        shim_out "asynchronous start via supervisor"
+        LASTRESULT=0
+        #exit $LASTRESULT
+        ;;
+
+      0)
+        # the timer ran out, as a result there may be a
+        # failure, check the result of the last status check
+        if [ $LASTRESULT -eq 0 ];
+        then
+          # there is a chance it will start.  Ask the supervisor.
+          $SVCCTRL $CMDSTART $SVCNAME > /dev/null
+          LASTRESULT=$?
+        else
+          # failure.
+          shim_out "$MYNAME: ERROR: supervisor was not successfully launched."
+          LASTRESULT=1
+          exit $LASTRESULT
+        fi
+        ;;
+
+      *)
+        # status reported back with time to spare, ask the supervisor to start the service.
+        $SVCCTRL $CMDSTART $SVCNAME > /dev/null
+        LASTRESULT=$?
+        ;;
+
+    esac
+
+  fi
+
+  return $LASTRESULT
+}
+
+
+stop_service()
+{
+  # A service scan link of the live instance needs to exist.
+  if [ -L $SVCSCAN/$SVCNAME ];
+  then
+    # Ask the supervisor to stop the daemon.
+    $SVCCTRL $CMDSTOP $SVCNAME > /dev/null
+    LASTRESULT=$?
+
+    # After a successful stop, remove the service link.
+    if [ $LASTRESULT -eq 0 ];
+    then
+      rm $SVCSCAN/$SVCNAME
+      LASTRESULT=$?
+    fi
+
+  else
+    # With no service scan link present, assume the supervisor
+    # does not have the daemon running.
+    shim_out "$MYNAME: no service link present in $SVCSCAN"
+    LASTRESULT=0
+
+  fi
+
+  return $LASTRESULT
+}
+
+
+force_reload_service()
+{
+  # LSB 3.1 specifies this as a mandatory command, but
+  # there is no consistent method for enforcing it with
+  # supervision.  By default, the command will fail.
+  # However, the next two lines of code can be replaced
+  # with customized commands to obtain a reload for the daemon.
+  shim_out "forced reload is not a supported operation."
+  return 1
+}
+
+
+# ----------------------------------------------------------------------------
+# Process the requested start/stop/restart/status/force-reload command
+# ----------------------------------------------------------------------------
+
+case "$1" in
+  start)
+    # Start the service, creating the service link if necessary.
+    begin_shim_out "Starting"
+    start_service
+    LASTRESULT=$?
+    end_shim_out $LASTRESULT
+    exit $LASTRESULT
+    ;;
+
+  stop)
+    # Stop the service, removing the service link
+    begin_shim_out "Stopping"
+    stop_service
+    LASTRESULT=$?
+    end_shim_out $LASTRESULT
+    exit $LASTRESULT
+    ;;
+
+  restart)
+    begin_shim_out "Restarting"
+    # Stop the service, removing the service link.
+    # If the service is already stopped or missing a link,
+    # ignore the result and proceed to the next step.
+    stop_service
+
+    # Start the service, creating the service link if necessary.
+    start_service
+    LASTRESULT=$?
+    end_shim_out $LASTRESULT
+    exit $LASTRESULT
+    ;;
+
+  status)
+    begin_shim_out
+    # A service scan link of the live instance needs to exist.
+    if [ -L $SVCSCAN/$SVCNAME ];
+    then
+      # Ask the supervisor about the status of the daemon.
+      $SVCSTATUS $MYNAME
+      LASTRESULT=$?
+    else
+      # No service link was found, so by default the service
+      # cannot be running.
+      shim_out "$MYNAME: No service link was found, service is not supervised."
+      LASTRESULT=0
+    fi
+    end_shim_out $LASTRESULT
+    exit $LASTRESULT
+    ;;
+
+  force-reload)
+    begin_shim_out
+    force_reload_service
+    LASTRESULT=$?
+    end_shim_out $LASTRESULT
+    exit $LASTRESULT
+    ;;
+
+  *)
+    # Provide a catch-all to explain what are valid commands.
+    echo "Usage: $MYNAME {start|stop|restart|status}"
+    LASTRESULT=1
+    exit $LASTRESULT
+    ;;
+
+esac
+
+exit 0
+
