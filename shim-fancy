@@ -355,8 +355,14 @@ case "$1" in
     if [ -L $SVCSCAN/$SVCNAME ];
     then
       # Ask the supervisor about the status of the daemon.
-      $SVCSTATUS $MYNAME
+      $SVCSTATUS $MYNAME > /dev/null
       LASTRESULT=$?
+      if [ $LASTRESULT -eq 0 ];
+      then
+        echo -n "$SVCNAME is supervised"
+      else
+        echo -n "$SVCNAME is NOT supervised"
+      fi
     else
       # No service link was found, so by default the service
       # cannot be running.
