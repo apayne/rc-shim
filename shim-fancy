@@ -319,7 +319,7 @@ force_reload_service()
 case "$1" in
   start)
     # Start the service, creating the service link if necessary.
-    begin_shim_out "Starting"
+    begin_shim_out "Starting $SVCNAME"
     start_service
     LASTRESULT=$?
     end_shim_out $LASTRESULT
@@ -328,7 +328,7 @@ case "$1" in
 
   stop)
     # Stop the service, removing the service link
-    begin_shim_out "Stopping"
+    begin_shim_out "Stopping $SVCNAME"
     stop_service
     LASTRESULT=$?
     end_shim_out $LASTRESULT
@@ -336,7 +336,7 @@ case "$1" in
     ;;
 
   restart)
-    begin_shim_out "Restarting"
+    begin_shim_out "Restarting $SVCNAME"
     # Stop the service, removing the service link.
     # If the service is already stopped or missing a link,
     # ignore the result and proceed to the next step.
