@@ -6,21 +6,25 @@ SVCCTRL=fail
 CMDSTOP=fail
 CMDSTART=fail
 SVCSTATUS=fail
+SVCRELOAD=fail
 
 # daemontools, daemontools-encore, possibly freedt as well
 #SVCCTRL=svc
 #CMDSTOP=stop
 #CMDSTART=start
 #SVCSTATUS="svstat"
+#SVCRELOAD="svc -h"
 
 # runit
 #SVCCTRL=sv
 #CMDSTOP=stop
 #CMDSTART=start
 #SVCSTATUS="sv status"
+#SVCRELOAD="sv hup"
 
 # s6
 #SVCCTRL=s6-svc
 #CMDSTOP=stop
 #CMDSTART=start
 #SVCSTATUS="s6-svstat"
+#SVCRELOAD="s6-svc -h"
