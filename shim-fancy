@@ -373,7 +373,7 @@ case "$1" in
     else
       # No service link was found, so by default the service
       # cannot be running.
-      shim_out "$MYNAME: No service link was found, service is not supervised."
+      shim_out "$MYNAME: No service link was found, service is NOT supervised."
       LASTRESULT=0
     fi
     end_shim_out $LASTRESULT
