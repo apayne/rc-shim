@@ -65,7 +65,7 @@ a copy of the shim in its place.  Here is an example using snmpd:
 
     >sudo mkdir -p /etc/init.d/ARCHIVE ; mv /etc/init.d/snmpd /etc/init.d/ARCHIVE/snmpd.original
 
-    >sudo cp shim-plain /etc/init.d/snmpd
+    >sudo cp rc-shim /etc/init.d/snmpd
 
 6. By default, the shim will call /bin/sh as the shell to be used.  If 
 you wish to use another supported shell, you will want to change the 
