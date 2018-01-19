@@ -77,13 +77,6 @@ test on a live or "production" service that is receiving active use.
 
     >sudo ./shim-test snmpd
 
-If you want to have "fancy printing" instead of the standard output of 
-the supervisor commands, you can substitute `shim-fancy` wherever you see 
-`shim-plain`.  NOTE: this is currently an experimental option.  The 
-functionality remains the same, but the output may be munged as a 
-result of the processing performed.  You use it at your own risk.
-
-
 ## How this works #
 
 The basic idea behind "System-V styled" rc scripts is that a set of 

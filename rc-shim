@@ -164,6 +164,18 @@ else
 fi
 }
 
+shim_info()
+{
+if [ $SUPPORTS_LSB -eq 1 ];
+then
+  # use LSB hooks to send output
+  log_action_msg "$1"
+else
+  # LSB not available, just send raw output
+  echo "$1"
+fi
+}
+
 end_shim_out()
 {
 if [ $SUPPORTS_LSB -eq 1 ];
@@ -390,7 +402,7 @@ case "$1" in
 
   *)
     # Provide a catch-all to explain what are valid commands.
-    echo "Usage: $MYNAME {start|stop|restart|status}"
+    shim_info "Usage: $MYNAME {start|stop|restart|status}"
     LASTRESULT=1
     exit $LASTRESULT
     ;;
