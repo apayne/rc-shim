@@ -143,6 +143,12 @@ then
   . /lib/lsb/init-functions
 fi
 
+
+# ----------------------------------------------
+# used at the beginning of all non-status output
+# NOTE: must be called first!
+# ----------------------------------------------
+
 begin_shim_out()
 {
 if [ $SUPPORTS_LSB -eq 1 ];
@@ -151,6 +157,10 @@ then
 #  log_daemon_msg "$SVCNAME"
 fi
 }
+
+# ------------------------------------------
+# use this only after calling begin_shim_out
+# ------------------------------------------
 
 shim_out()
 {
@@ -164,6 +174,25 @@ else
 fi
 }
 
+
+# ------------------------------------------
+# called at the end of all non-status output
+# must be called last, especially to trigger
+# LSB fancy-printing!
+# ------------------------------------------
+
+end_shim_out()
+{
+if [ $SUPPORTS_LSB -eq 1 ];
+then
+  log_end_msg "$1"
+fi
+}
+
+# -----------------------------------------------------
+# A special-case printing for showing usage information
+# -----------------------------------------------------
+
 shim_info()
 {
 if [ $SUPPORTS_LSB -eq 1 ];
@@ -173,14 +202,6 @@ then
 else
   # LSB not available, just send raw output
   echo "$1"
-fi
-}
-
-end_shim_out()
-{
-if [ $SUPPORTS_LSB -eq 1 ];
-then
-  log_end_msg "$1"
 fi
 }
 
