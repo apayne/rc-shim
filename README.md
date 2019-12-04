@@ -1,5 +1,6 @@
 ![GitHub](https://img.shields.io/github/license/apayne/rc-shim?style=flat-square)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/apayne/rc-shim)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c4d18cc569354c7b8d616e81be997bed)](https://www.codacy.com/manual/avery.p.payne/rc-shim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=apayne/rc-shim&amp;utm_campaign=Badge_Grade)
 
 # Introduction #
 
