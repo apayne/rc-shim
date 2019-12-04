@@ -1,4 +1,6 @@
 ![GitHub](https://img.shields.io/github/license/apayne/rc-shim?style=flat-square)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/apayne/rc-shim)
+
 # Introduction #
 
 ---
