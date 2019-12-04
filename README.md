@@ -1,3 +1,4 @@
+![GitHub](https://img.shields.io/github/license/apayne/rc-shim?style=flat-square)
 # Introduction #
 
 ---
